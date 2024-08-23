@@ -201,3 +201,39 @@ vim.opt.formatoptions = "jcql" -- Before the value was jcroql
 
 -- Set textwidth to 100
 vim.opt.textwidth     = 100
+
+
+
+-- --------------------------------------------------------------------------------------------
+-- KEYBINDINGS / SHORTCUTS CONFIGURATION
+-- --------------------------------------------------------------------------------------------
+local keymap               = vim.api.nvim_set_keymap
+local opts                 = { noremap = true }
+
+keymap('v', '>', '>gv', opts) -- combinaison pour décaler un bloc de texte
+keymap('v', '<', '<gv', opts) -- combinaison pour décaler un bloc de texte
+
+-- Pour utiliser cette commande, il est nécessaire d'installer xclip (sudo apt install xclip)
+vim.keymap.set('v', '<C-c>', '"+y', { noremap = true, desc = "[C]opy to clipboard" }) -- Ajout du CTRL+C pour copier un fichier dans le buffer
+
+vim.keymap.set('n', '<C-a>', 'ggVG', { noremap = true, desc = "Select all buffer" }) -- Ajout du control A pour selectionner l'ensemble du fichier
+
+vim.keymap.set('i', '<C-x>', '<esc>lce', { noremap = true, desc = "Delete new word" }) -- En mode insertion, supprime le mot suivant 
+vim.keymap.set('i', '<C-BS>', '<esc>cvb', { noremap = true, desc = "Delete last word" }) -- En mode insertion, supprime le mot precedent 
+
+vim.keymap.set('v', '<Leader>f', '"1y:%s/<C-R>1//gc<Left><Left><Left>', { noremap = true, desc = "Start search and replace for selected word" }) -- Prend le mot sélectionné et vient automatiquement lancer une rechercher/remplacer en le positionnant au bon endroit
+vim.keymap.set('v', '//', 'y/\\V<C-R>=escape(@",\'/\')<CR><CR>', { noremap = true, desc = "Search selected word" }) -- Fait une recherche du pattern sélectionné
+
+vim.keymap.set('n', '<Leader>wz', '*#:setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\\|\\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=2<CR>', { noremap = true, desc = "Fold every lines that don't contain word" }) -- Fait une recherche du mot ou se trouve le curseur puis recherche directement le mot et fait un fold de tout ce qui n'est pas le mot
+vim.keymap.set('n', '<Leader>Wz', 'viW*#:setlocal foldexpr=(getline(v:lnum)=~@/)?0:(getline(v:lnum-1)=~@/)\\|\\|(getline(v:lnum+1)=~@/)?1:2 foldmethod=expr foldlevel=0 foldcolumn=2<CR>', { noremap = true, desc = "Fold every lines that don't contain WORD" }) -- Même chose mais en prenant un mot plus large.
+
+vim.keymap.set('n', '<leader>db', ':bn<cr>:bd #<cr>', { desc = '[D]elete [B]uffer' })
+
+vim.keymap.set('n', ']]', ']]zt', { desc = 'Jump to next function, then set cursor to top' })
+vim.keymap.set('n', '[[', '[[zt', { desc = 'Jump to previous function, then set cursor to top' })
+
+vim.keymap.set('n', ']m', ']mzt', { desc = 'Jump to next method, then set cursor to top' })
+vim.keymap.set('n', '[m', '[mzt', { desc = 'Jump to previous method, then set cursor to top' })
+
+vim.keymap.set('n', '}', '}zt', { desc = 'Jump to next blank line, then set cursor to top' })
+vim.keymap.set('n', '{', '{zt', { desc = 'Jump to previous blank line, then set cursor to top' })
