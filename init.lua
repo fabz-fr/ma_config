@@ -237,3 +237,9 @@ vim.keymap.set('n', '[m', '[mzt', { desc = 'Jump to previous method, then set cu
 
 vim.keymap.set('n', '}', '}zt', { desc = 'Jump to next blank line, then set cursor to top' })
 vim.keymap.set('n', '{', '{zt', { desc = 'Jump to previous blank line, then set cursor to top' })
+
+-- Delete all buffer but this one
+vim.api.nvim_create_user_command('Bda', function()
+  vim.cmd('%bd')
+end, {})
+
