@@ -96,18 +96,6 @@ later(function() require('mini.tabline').setup() end)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- " Disable compatibility with vi which can cause unexpected issues.
--- set nocompatible
-
--- " Enable type file detection. Vim will be able to try to detect the type of file in use.
--- filetype on
-
--- " Enable plugins and load plugin for the detected file type.
--- filetype plugin on
-
--- " While searching though a file incrementally highlight matching characters as you type.
--- set incsearch
-
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -175,19 +163,18 @@ vim.opt.scrolloff = 10
 
 -- Gestion des tabulations
 vim.o.shiftwidth      = 4 -- La taille définit pour l'appui sur la touche tab est de 4 caractères
-vim.o.expandtab       = 1 -- Utilisation d'espace au lieu des tabulations
+vim.o.expandtab       = true -- Utilisation d'espace au lieu des tabulations
 vim.o.tabstop         = 4 -- La taille d'une tabulation est de 4 caractères
 
 vim.o.cursorline      = true  -- Show the line where the cursor is
 vim.o.cursorcolumn    = true  -- show the column where the cursor is
 
 vim.o.cc              = "100" -- set a colon border at 100 characters
-vim.o.hlsearch        = 1     -- Set Highlight
+vim.o.hlsearch        = true     -- Set Highlight
 
-vim.o.nowrap          = true  -- Faire en sorte que les lignes dépassent de l'écran plutôt qu'elles reviennent au début de la ligne suivante
+--vim.opt.nowrap          = true  -- Faire en sorte que les lignes dépassent de l'écran plutôt qu'elles reviennent au début de la ligne suivante
 vim.wo.wrap           = false
 vim.wo.linebreak      = true
-vim.wo.list           = false -- extra option I set in addition to the ones in your questions
 
 -- Automatically reload file when externally updated
 vim.o.autoread        = true
@@ -201,7 +188,6 @@ vim.opt.formatoptions = "jcql" -- Before the value was jcroql
 
 -- Set textwidth to 100
 vim.opt.textwidth     = 100
-
 
 
 -- --------------------------------------------------------------------------------------------
