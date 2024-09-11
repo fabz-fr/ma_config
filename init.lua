@@ -39,6 +39,10 @@ now(function()
         source = 'WhoIsSethDaniel/mason-tool-installer.nvim',
         depends = { 'williamboman/mason.nvim' },
     })
+
+    add({
+        source = 'ibhagwan/fzf-lua',
+    })
 end)
 
 later(function()
@@ -57,14 +61,20 @@ later(function()
   })
 end)
 
-later(function() require('mason').setup() end)
-later(function() require('mason-lspconfig').setup(
-    ) end)
+now(function() 
+    require('mason').setup() 
+    require('mason-lspconfig').setup() 
+    require('mason-tool-installer').setup { ensure_installed = available_lsp_servers }
 
-later(function() 
-require('mason-tool-installer').setup {
-    ensure_installed = available_lsp_servers
-} end)
+    -- Importer lspconfig
+    local lspconfig = require('lspconfig')
+    -- Boucle sur chaque serveur dans le tableau et l'initialise
+    for server, config in pairs(available_lsp_servers) do
+        lspconfig[server].setup(config)
+    end
+end)
+
+later(function() require('fzf-lua').setup() end)
 
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 -- later(function() require('mini.align').setup() end)  -- Add alignment of data
@@ -248,103 +258,73 @@ vim.keymap.set('n', '{', '{zt', { desc = 'Jump to previous blank line, then set 
 -- Delete all buffer
 vim.api.nvim_create_user_command('Bda', function() vim.cmd('%bd') end, {})
 
--- later(function() require('lspconfig').setup() end)
+-- See `:help telescope.builtin`
+local builtin = require('fzf-lua')
+vim.keymap.set('n', '<leader>sf', builtin.files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sw', builtin.grep_cword, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sW', builtin.grep_cWORD, { desc = '[S]earch current [W]ORD' })
+vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', builtin.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
+vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles search' })
+vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
+
+-- vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+-- vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+-- vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+-- vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+
+-- -------------------------------------------------------------------------------------------------
+-- AUTO COMMANDS
+-- -------------------------------------------------------------------------------------------------
+-- Highlight when yanking (copying) text
+--  Try it with `yap` in normal mode
+--  See `:help vim.highlight.on_yank()`
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
 -- -------------------------------------------------------------------------------------------------
 -- LSP
 -- -------------------------------------------------------------------------------------------------
---  This function gets run when an LSP attaches to a particular buffer.
---    That is to say, every time a new file is opened that is associated with
---    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
---    function will be executed to configure the current buffer
-vim.api.nvim_create_autocmd('LspAttach', {
-    group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
-    callback = function(event)      
+-- Jump to the definition of the word under your cursor.
+--  This is where a variable was first declared, or where a function is defined, etc.
+--  To jump back, press <C-t>.
+vim.keymap.set('n','gd', require('fzf-lua').lsp_definitions, { desc = '[G]oto [D]efinition'})
 
-        -- We create a function that lets us more easily define mappings specific
-        -- for LSP related items. It sets the mode, buffer and description for us each time.
-        local map = function(keys, func, desc, mode)
-            mode = mode or 'n'
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-        end
+-- Find references for the word under your cursor.
+vim.keymap.set('n','gr', require('fzf-lua').lsp_references, { desc = '[G]oto [R]eferences'})
 
-        -- Jump to the definition of the word under your cursor.
-        --  This is where a variable was first declared, or where a function is defined, etc.
-        --  To jump back, press <C-t>.
-        map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+-- Jump to the implementation of the word under your cursor.
+--  Useful when your language has ways of declaring types without an actual implementation.
+vim.keymap.set('n','gI', require('fzf-lua').lsp_implementations, { desc = '[G]oto [I]mplementation'})
 
-        -- Find references for the word under your cursor.
-        map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+-- Jump to the type of the word under your cursor.
+--  Useful when you're not sure what type a variable is and you want to see
+--  the definition of its *type*, not where it was *defined*.
+vim.keymap.set('n','<leader>D', require('fzf-lua').lsp_typedefs, { desc = 'Type [D]efinition'})
 
-        -- Jump to the implementation of the word under your cursor.
-        --  Useful when your language has ways of declaring types without an actual implementation.
-        map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+-- Fuzzy find all the symbols in your current document.
+--  Symbols are things like variables, functions, types, etc.
+vim.keymap.set('n','<leader>ds', require('fzf-lua').lsp_document_symbols, { desc = '[D]ocument [S]ymbols'})
 
-        -- Jump to the type of the word under your cursor.
-        --  Useful when you're not sure what type a variable is and you want to see
-        --  the definition of its *type*, not where it was *defined*.
-        map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+-- Rename the variable under your cursor.
+--  Most Language Servers support renaming across files, etc.
+vim.keymap.set('n','<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame'})
 
-        -- Fuzzy find all the symbols in your current document.
-        --  Symbols are things like variables, functions, types, etc.
-        map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+-- Execute a code action, usually your cursor needs to be on top of an error
+-- or a suggestion from your LSP for this to activate.
+vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction'})
 
-        -- Fuzzy find all the symbols in your current workspace.
-        --  Similar to document symbols, except searches over your entire project.
-        map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-        -- Rename the variable under your cursor.
-        --  Most Language Servers support renaming across files, etc.
-        map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-        -- Execute a code action, usually your cursor needs to be on top of an error
-        -- or a suggestion from your LSP for this to activate.
-        map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
-
-        -- WARN: This is not Goto Definition, this is Goto Declaration.
-        --  For example, in C this would take you to the header.
-        map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-
-        -- The following code creates a keymap to toggle inlay hints in your
-        -- code, if the language server you are using supports them
-        -- This may be unwanted, since they displace some of your code
-        if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-            map('<leader>th', function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
-        end
-    end,
-})
-
--- Configure the LSP servers here
--- Add any additional override configuration in the following tables. Available keys are:
--- - cmd (table): Override the default command used to start the server
--- - filetypes (table): Override the default list of associated filetypes for the server
--- - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
--- - settings (table): Override the default settings passed when initializing the server.
--- See `:help lspconfig-all` for a list of all the pre-configured LSPs
-
-    -- opts = function()
-    --
-    --     -- TODO seemes unnecessary with mini.completion 
-    --     -- check if it is useless 
-    --     --
-    --     -- LSP servers and clients are able to communicate to each other what features they support.
-    --     -- By default, Neovim doesn't support everything that is in the LSP specification.
-    --     -- When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-    --     -- So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-    --     -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-    --     -- capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-    --
-    --
-    --
-    -- end,
-    --
-
-
-
-
-
-
-
+-- Search every elements from lsp
+vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et [G]odshit'})
+--
+-- WARN: This is not Goto Definition, this is Goto Declaration.
+--  For example, in C this would take you to the header.
+vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration'})
 
