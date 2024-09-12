@@ -87,17 +87,18 @@ later(function() require('fzf-lua').setup() end)
 -- later(function() require('mini.comment').setup() end)    -- Add comments (already in neovim)
 -- later(function() require('mini.deps').setup() end)   -- Package manager (is already installed) 
 -- later(function() require('mini.doc').setup() end)    -- Gestion de la doc pour neovim
+-- later(function() require('mini.fuzzy').setup() end)    -- Fuzzy sorter
+-- later(function() require('mini.hipatterns').setup() end)  -- Gère l'arrière plan de certains patterns et couleurs
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
 later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
-later(function() require('mini.extra').setup() end)
-later(function() require('mini.files').setup() end)
-later(function() require('mini.fuzzy').setup() end)
-later(function() require('mini.git').setup() end)
-later(function() require('mini.hipatterns').setup() end)
+later(function() require('mini.extra').setup() end)    
+-- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
+later(function() require('mini.files').setup() end)    -- File manager
+later(function() require('mini.git').setup() end)      -- Gestion de Git 
 -- later(function() require('mini.hues').setup() end)
 -- later(function() require('mini.icons').setup() end)
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope 
