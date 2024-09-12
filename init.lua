@@ -78,19 +78,19 @@ end)
 
 later(function() require('fzf-lua').setup() end)
 
-later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 -- later(function() require('mini.align').setup() end)  -- Add alignment of data
-later(function() require('mini.animate').setup() end)   -- Animate actions in neovim
 -- later(function() require('mini.base16').setup() end) -- base16 colorscheme
-later(function() require('mini.basics').setup() end)    -- Add configuration for basic setup
--- later(function() require('mini.bracketed').setup() end) -- Add jumps using brackets []
+-- later(function() require('mini.basics').setup() end)    -- Add action for basic programming: moving splits, 
+-- later(function() require('mini.bracketed').setup() end) -- Add several jumps based on brackets []
 -- later(function() require('mini.bufremove').setup() end) -- Add command to remove and hide buffers
-later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
--- later(function() require('mini.colors').setup() end) -- Tweak colorschem
+-- later(function() require('mini.colors').setup() end) -- Tweak colorscheme
 -- later(function() require('mini.comment').setup() end)    -- Add comments (already in neovim)
+-- later(function() require('mini.deps').setup() end)   -- Package manager (is already installed) 
+later(function() require('mini.ai').setup() end)        -- Add a/i text objects
+later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
+later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
--- later(function() require('mini.deps').setup() end)   -- Package manager
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
 -- later(function() require('mini.doc').setup() end)
 later(function() require('mini.extra').setup() end)
