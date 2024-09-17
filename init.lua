@@ -42,10 +42,12 @@ now(function()
         depends = { 'williamboman/mason.nvim' },
     })
 
-    add({
-        source = 'ibhagwan/fzf-lua',
-    })
+
 end)
+
+later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
+later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end)
+later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end)
 
 later(function()
   add({
