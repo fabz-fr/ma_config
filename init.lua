@@ -46,8 +46,8 @@ now(function()
 end)
 
 later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
-later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end)
-later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end)
+later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
+later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
 
 later(function()
   add({
