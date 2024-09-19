@@ -45,7 +45,7 @@ now(function()
 
 end)
 
-later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
+now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
 
@@ -91,34 +91,34 @@ later(function() require('fzf-lua').setup() end)
 -- later(function() require('mini.doc').setup() end)    -- Gestion de la doc pour neovim
 -- later(function() require('mini.fuzzy').setup() end)    -- Fuzzy sorter
 -- later(function() require('mini.hipatterns').setup() end)  -- Gère l'arrière plan de certains patterns et couleurs
+-- later(function() require('mini.hues').setup() end) -- Change le fond d'écran
+-- later(function() require('mini.map').setup() end)       -- Ajoute une barre latérale à droite représentant globalement l'état du fichier
+-- later(function() require('mini.misc').setup() end)       -- Ajoute des fonctions lua
+-- later(function() require('mini.jump').setup() end)       -- améliore t T f F en permettant des jumps sur plusieurs ligne ainsi que plusieurs sauts.
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
 later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
-later(function() require('mini.extra').setup() end)    
+later(function() require('mini.extra').setup() end)
 -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
 later(function() require('mini.files').setup() end)    -- File manager
 later(function() require('mini.git').setup() end)      -- Gestion de Git 
--- later(function() require('mini.hues').setup() end)
--- later(function() require('mini.icons').setup() end)
+-- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope 
--- later(function() require('mini.jump').setup() end)
--- later(function() require('mini.jump2d').setup() end)
-later(function() require('mini.map').setup() end)
-later(function() require('mini.misc').setup() end)
-later(function() require('mini.move').setup() end)
-later(function() require('mini.notify').setup() end)
-later(function() require('mini.operators').setup() end)
-later(function() require('mini.pairs').setup() end)
-later(function() require('mini.pick').setup() end)
--- later(function() require('mini.sessions').setup() end)
-later(function() require('mini.splitjoin').setup() end)
--- later(function() require('mini.starter').setup() end)
-later(function() require('mini.statusline').setup() end)
+later(function() require('mini.jump2d').setup() end)     -- Permet les quickjump
+later(function() require('mini.move').setup() end)          -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
+later(function() require('mini.notify').setup() end)        -- Permet l'ajout de notification en haut à droite de l'écran
+-- later(function() require('mini.operators').setup() end)  -- Fait un truc bizarre dans les copier
+later(function() require('mini.pairs').setup() end)         -- Feature pour la gestion des paires ({"etc."})
+-- later(function() require('mini.pick').setup() end)       -- équivalent de fzf et telescope
+-- later(function() require('mini.sessions').setup() end)   -- gestionnaire de sessions nvim. Intéressant si on veut avoir des workspaces
+-- later(function() require('mini.splitjoin').setup() end)     -- Change la mise en forme de tableau et liste
+-- later(function() require('mini.starter').setup() end)    -- Change l'écran de démarrage
+later(function() require('mini.statusline').setup() end)    -- statusline
 later(function() require('mini.surround').setup() end)
-later(function() require('mini.tabline').setup() end)
+later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
 -- later(function() require('mini.test').setup() end)
 -- later(function() require('mini.trailspace').setup() end)
 -- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
@@ -194,4 +194,8 @@ vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et 
 -- WARN: This is not Goto Definition, this is Goto Declaration.
 --  For example, in C this would take you to the header.
 vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration'})
+
+-- vim.keymap.set('vn', '<leader>j', require('mini.jump2d').start, {desc ='[J]ump'})
+vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
+
 
