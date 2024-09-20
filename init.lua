@@ -95,14 +95,21 @@ later(function() require('fzf-lua').setup() end)
 -- later(function() require('mini.map').setup() end)       -- Ajoute une barre latérale à droite représentant globalement l'état du fichier
 -- later(function() require('mini.misc').setup() end)       -- Ajoute des fonctions lua
 -- later(function() require('mini.jump').setup() end)       -- améliore t T f F en permettant des jumps sur plusieurs ligne ainsi que plusieurs sauts.
+-- later(function() require('mini.operators').setup() end)  -- Fait un truc bizarre dans les copier
+-- later(function() require('mini.pick').setup() end)       -- équivalent de fzf et telescope
+-- later(function() require('mini.sessions').setup() end)   -- gestionnaire de sessions nvim. Intéressant si on veut avoir des workspaces
+-- later(function() require('mini.splitjoin').setup() end)     -- Change la mise en forme de tableau et liste
+-- later(function() require('mini.starter').setup() end)    -- Change l'écran de démarrage
+-- later(function() require('mini.test').setup() end)       -- Lance des tests
+-- later(function() require('mini.trailspace').setup() end) -- Highlight les trailings spaces
+-- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
 later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
-later(function() require('mini.extra').setup() end)
--- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
+later(function() require('mini.extra').setup() end)    -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
 later(function() require('mini.files').setup() end)    -- File manager
 later(function() require('mini.git').setup() end)      -- Gestion de Git 
 -- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
@@ -110,18 +117,10 @@ later(function() require('mini.indentscope').setup() end) -- Affiche une ligne p
 later(function() require('mini.jump2d').setup() end)     -- Permet les quickjump
 later(function() require('mini.move').setup() end)          -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
 later(function() require('mini.notify').setup() end)        -- Permet l'ajout de notification en haut à droite de l'écran
--- later(function() require('mini.operators').setup() end)  -- Fait un truc bizarre dans les copier
 later(function() require('mini.pairs').setup() end)         -- Feature pour la gestion des paires ({"etc."})
--- later(function() require('mini.pick').setup() end)       -- équivalent de fzf et telescope
--- later(function() require('mini.sessions').setup() end)   -- gestionnaire de sessions nvim. Intéressant si on veut avoir des workspaces
--- later(function() require('mini.splitjoin').setup() end)     -- Change la mise en forme de tableau et liste
--- later(function() require('mini.starter').setup() end)    -- Change l'écran de démarrage
 later(function() require('mini.statusline').setup() end)    -- statusline
-later(function() require('mini.surround').setup() end)
+later(function() require('mini.surround').setup() end)      -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
--- later(function() require('mini.test').setup() end)
--- later(function() require('mini.trailspace').setup() end)
--- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
 
 -- See `:help telescope.builtin`
 local builtin = require('fzf-lua')
