@@ -23,6 +23,7 @@ local available_lsp_servers = {
     pyright = {},
     rust_analyzer = {},
     lua_ls = {},
+    cmake = {},
 }
 
 now(function()
@@ -41,13 +42,26 @@ now(function()
         source = 'WhoIsSethDaniel/mason-tool-installer.nvim',
         depends = { 'williamboman/mason.nvim' },
     })
-
-
 end)
 
 now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
+
+later(function() add({
+    source = "mfussenegger/nvim-dap",
+    depends = {
+        -- Creates a beautiful debugger UI
+        'rcarriga/nvim-dap-ui',
+
+        -- Required dependency for nvim-dap-ui
+        'nvim-neotest/nvim-nio',
+
+        -- Installs the debug adapters for you
+        'williamboman/mason.nvim',
+        'jay-babu/mason-nvim-dap.nvim',
+    }
+}) end)
 
 later(function()
   add({
@@ -103,13 +117,15 @@ later(function() require('fzf-lua').setup() end)
 -- later(function() require('mini.test').setup() end)       -- Lance des tests
 -- later(function() require('mini.trailspace').setup() end) -- Highlight les trailings spaces
 -- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
+
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
-later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
+-- later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
 later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
-later(function() require('mini.extra').setup() end)    -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
+later(function() require('mini.extra').setup() end)
+-- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
 later(function() require('mini.files').setup() end)    -- File manager
 later(function() require('mini.git').setup() end)      -- Gestion de Git 
 -- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
@@ -121,6 +137,98 @@ later(function() require('mini.pairs').setup() end)         -- Feature pour la g
 later(function() require('mini.statusline').setup() end)    -- statusline
 later(function() require('mini.surround').setup() end)      -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
+
+
+-- configure dap plugins
+later(function()
+    local dap = require 'dap'
+    local dapui = require 'dapui'
+
+    require('mason-nvim-dap').setup {
+      -- Makes a best effort to setup the various debuggers with
+      -- reasonable debug configurations
+      automatic_installation = true,
+
+      -- You can provide additional configuration to the handlers,
+      -- see mason-nvim-dap README for more information
+      handlers = {},
+
+      -- You'll need to check that you have the required things installed
+      -- online, please don't ask me how to install them :)
+      ensure_installed = {
+        -- Update this to ensure that you have the debuggers for the langs you want
+        -- 'delve',
+      },
+    }
+
+    -- Dap UI setup
+    -- For more information, see |:help nvim-dap-ui|
+    dapui.setup {
+      -- Set icons to characters that are more likely to work in every terminal.
+      --    Feel free to remove or use ones that you like more! :)
+      --    Don't feel like these are good choices.
+      icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
+      controls = {
+        icons = {
+          pause = '⏸',
+          play = '▶',
+          step_into = '⏎',
+          step_over = '⏭',
+          step_out = '⏮',
+          step_back = 'b',
+          run_last = '▶▶',
+          terminate = '⏹',
+          disconnect = '⏏',
+        },
+      },
+    }
+
+    dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+    dap.listeners.before.event_terminated['dapui_config'] = dapui.close
+    dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+    vim.keymap.set('n', '<F5>',      dap.continue   , { desc = 'Debug start/continue' })
+    vim.keymap.set('n', '<F6>',      dap.step_into   , { desc = 'Debug Step into' })
+    vim.keymap.set('n', '<F7>',      dap.step_over   , { desc = 'Debug step over' })
+    vim.keymap.set('n', '<F8>',      dap.step_out   , { desc = 'Debug step out' })
+    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint   , { desc = 'Debug toggle breakpoint' })
+    vim.keymap.set('n', '<leader>B', function() dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, { desc = 'Debug toggle breakpoint' })
+
+    dap.adapters.lldb = {
+        type = 'executable',
+        command = '/usr/bin/lldb-vscode-14', -- adjust as needed, must be absolute path
+        name = 'lldb'
+    }
+
+    dap.configurations.cpp = 
+    {
+        {
+            name = 'Launch',
+            type = 'lldb',
+            request = 'launch',
+            program = function()
+              return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            end,
+            cwd = '${workspaceFolder}',
+            stopOnEntry = false,
+            args = {},
+
+            -- 💀
+            -- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
+            --
+            --    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+            --
+            -- Otherwise you might get the following error:
+            --
+            --    Error on launch: Failed to attach to the target process
+            --
+            -- But you should be aware of the implications:
+            -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
+            -- runInTerminal = false,
+        },
+    }
+
+end)
 
 -- See `:help telescope.builtin`
 local builtin = require('fzf-lua')
@@ -189,6 +297,9 @@ vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ct
 
 -- Search every elements from lsp
 vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et [G]odshit'})
+
+-- Search into dap
+vim.keymap.set('n','<F4>', require('fzf-lua').dap_commands, { desc = 'Get DAP commands'})
 --
 -- WARN: This is not Goto Definition, this is Goto Declaration.
 --  For example, in C this would take you to the header.
