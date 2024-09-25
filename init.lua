@@ -120,7 +120,18 @@ later(function() require('fzf-lua').setup() end)
 
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
 -- later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
-later(function() require('mini.clue').setup() end)      -- Add commands clues in a split
+later(function() require('mini.clue').setup( {
+  triggers = {
+    -- Leader triggers
+    { mode = 'n', keys = '<Leader>' },
+    { mode = 'n', keys = 's' },
+    { mode = 'n', keys = '<Leader>s' },
+    { mode = 'n', keys = '<Leader>g' },
+    { mode = 'n', keys = 'g' },
+    { mode = 'n', keys = ']' },
+    { mode = 'n', keys = '[' },
+} }
+    ) end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
@@ -242,6 +253,12 @@ vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find exis
 
 vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles search' })
 vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
+
+vim.keymap.set('n', '<space>', '<NOP>')
+vim.keymap.set('n', 's', '<NOP>')
+
+vim.keymap.set('n', 'gt', '<cmd>lua MiniDiff.toggle_overlay()<CR>', { desc= 'Toggle diff overlay'})
+
 
 -- -------------------------------------------------------------------------------------------------
 -- AUTO COMMANDS
