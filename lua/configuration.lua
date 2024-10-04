@@ -131,3 +131,6 @@ vim.keymap.set('n', '{', '{zt', { desc = 'Jump to previous blank line, then set 
 -- Delete all buffer
 vim.api.nvim_create_user_command('Bda', function() vim.cmd('%bd') end, {})
 
+vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
+
+
