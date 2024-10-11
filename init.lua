@@ -32,7 +32,12 @@ now(function()
     add({
     source = 'neovim/nvim-lspconfig',
     -- Supply dependencies near target plugin
-    depends = { 'williamboman/mason.nvim' },
+        depends = { 'williamboman/mason.nvim',
+                'williamboman/mason-lspconfig.nvim'},
+                'WhoIsSethDaniel/mason-tool-installer.nvim',
+    })
+    add({source = 'williamboman/mason.nvim',
+        depends = {'mason-org/mason-registry'}
     })
     add({
         source = 'williamboman/mason-lspconfig.nvim',
@@ -82,7 +87,12 @@ end)
 now(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
-    require('mason-tool-installer').setup { ensure_installed = available_lsp_servers }
+        -- require('mason-lspconfig').setup()
+    local servers_to_install = vim.tbl_keys(available_lsp_servers or {})
+
+    require('mason-tool-installer').setup( { 
+        ensure_installed = servers_to_install,
+    })
 
     -- Importer lspconfig
     local lspconfig = require('lspconfig')
