@@ -52,6 +52,8 @@ end)
 now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
+later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
+
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
@@ -103,6 +105,7 @@ now(function()
 end)
 
 later(function() require('fzf-lua').setup() end)
+later(function() require('vscode').load('dark')end)
 
 -- later(function() require('mini.align').setup() end)  -- Add alignment of data
 -- later(function() require('mini.base16').setup() end) -- base16 colorscheme
