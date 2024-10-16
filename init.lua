@@ -53,7 +53,7 @@ now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
 later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
-
+later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
