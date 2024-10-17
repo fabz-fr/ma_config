@@ -338,4 +338,6 @@ vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration
 -- vim.keymap.set('vn', '<leader>j', require('mini.jump2d').start, {desc ='[J]ump'})
 vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
 
-
+vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make clean<CR>, ', { desc = '[M]ake [C]lean' })
+vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
+vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
