@@ -128,6 +128,9 @@ vim.keymap.set('n', '[m', '[mzt', { desc = 'Jump to previous method, then set cu
 vim.keymap.set('n', '}', '}zt', { desc = 'Jump to next blank line, then set cursor to top' })
 vim.keymap.set('n', '{', '{zt', { desc = 'Jump to previous blank line, then set cursor to top' })
 
+vim.keymap.set('n', ']q', '<cmd>:cnext<CR>', { desc = 'Jump to next element in quickfix list' })
+vim.keymap.set('n', '[q', '<cmd>:cprevious<CR>', { desc = 'Jump to previous element in quickfix list' })
+
 -- Delete all buffer
 vim.api.nvim_create_user_command('Bda', function() vim.cmd('%bd') end, {})
 
