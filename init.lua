@@ -53,7 +53,8 @@ later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
 
 now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
-later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
+later(function() add({ source = 'kevinhwang91/nvim-ufo', 
+        depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
 
 later(function() add({
@@ -355,10 +356,23 @@ vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = 
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
 
 
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.foldcolumn = "1" -- Ajoute une colonne pour dire qu'il y a un fold
--- vim.opt.foldtext = ""    -- 
 vim.opt.foldlevel = 99 -- Permet de faire des folds par défaut à partir d'un certains niveau. On met à 99 pour ne pas activer cette fonctionnalité
 vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true 
+vim.opt.foldcolumn = "1" -- Ajoute une colonne pour dire qu'il y a un fold
+
+later(function() 
+    -- Option 3: treesitter as a main provider instead
+    -- (Note: the `nvim-treesitter` plugin is *not* needed.)
+    -- ufo uses the same query files for folding (queries/<lang>/folds.scm)
+    -- performance and stability are better than `foldmethod=nvim_treesitter#foldexpr()`
+    require('ufo').setup({
+        provider_selector = function(bufnr, filetype, buftype)
+            return {'treesitter', 'indent'}
+        end
+    })
+
+    -- Using ufo provider need remap `zR` and `zM`. If Neovim is 0.6.1, remap yourself
+    vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+    vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+end)
