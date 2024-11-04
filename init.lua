@@ -352,6 +352,8 @@ vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make clean<CR>, ', { desc = 
 vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
 vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
 
+vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
+
 
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
