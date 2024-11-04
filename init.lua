@@ -49,10 +49,11 @@ now(function()
     })
 end)
 
+later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
+
 now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', }) end) -- Better fold handling
-later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
 later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
 
 later(function() add({
@@ -104,8 +105,14 @@ now(function()
     end
 end)
 
-later(function() require('fzf-lua').setup() end)
 later(function() require('vscode').load('dark')end)
+later(function() require('fzf-lua').setup({
+    keymap = {
+        fzf = {
+            ["ctrl-q"] = "select-all+accept",
+        },
+    },
+    }) end)
 
 -- later(function() require('mini.align').setup() end)  -- Add alignment of data
 -- later(function() require('mini.base16').setup() end) -- base16 colorscheme
@@ -143,6 +150,7 @@ later(function() require('mini.clue').setup( {
     { mode = 'n', keys = 'g' },
     { mode = 'n', keys = ']' },
     { mode = 'n', keys = '[' },
+    { mode = 'n', keys = 'z' },
 } }
     ) end)      -- Add commands clues in a split
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
@@ -271,6 +279,7 @@ vim.keymap.set('n', '<space>', '<NOP>')
 vim.keymap.set('n', 's', '<NOP>')
 
 vim.keymap.set('n', 'gt', '<cmd>lua MiniDiff.toggle_overlay()<CR>', { desc= 'Toggle diff overlay'})
+vim.keymap.set('n', '<A-o>', '<cmd>ClangdSwitchSourceHeader<CR>', { desc= 'Switch Source Header'})
 
 
 -- -------------------------------------------------------------------------------------------------
@@ -336,8 +345,18 @@ vim.keymap.set('n','<F4>', require('fzf-lua').dap_commands, { desc = 'Get DAP co
 vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration'})
 
 -- vim.keymap.set('vn', '<leader>j', require('mini.jump2d').start, {desc ='[J]ump'})
-vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
+-- vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
+
 
 vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make clean<CR>, ', { desc = '[M]ake [C]lean' })
 vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
 vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
+
+
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldcolumn = "1" -- Ajoute une colonne pour dire qu'il y a un fold
+-- vim.opt.foldtext = ""    -- 
+vim.opt.foldlevel = 99 -- Permet de faire des folds par défaut à partir d'un certains niveau. On met à 99 pour ne pas activer cette fonctionnalité
+vim.opt.foldlevelstart = 99
+vim.opt.foldenable = true 
