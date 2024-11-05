@@ -363,8 +363,12 @@ vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make clean<CR>, ', { desc = 
 vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
 vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
 
-vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
+vim.keymap.set( {'n'}, 'f',  '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
+vim.keymap.set( {'n'}, 'F', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
+vim.keymap.set( {'n'}, 't',       '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
+vim.keymap.set( {'n'}, 'T',       '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
 
+vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
 
 vim.opt.foldlevel = 99 -- Permet de faire des folds par défaut à partir d'un certains niveau. On met à 99 pour ne pas activer cette fonctionnalité
 vim.opt.foldlevelstart = 99
