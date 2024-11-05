@@ -163,7 +163,17 @@ later(function() require('mini.files').setup() end)    -- File manager
 later(function() require('mini.git').setup() end)      -- Gestion de Git 
 -- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope 
-later(function() require('mini.jump2d').setup() end)     -- Permet les quickjump
+  local jump2d = require('mini.jump2d')
+  local jump_line_start = jump2d.builtin_opts.word_start -- line_start
+later(function() require('mini.jump2d').setup( {
+    spotter = jump_line_start.spotter,
+    -- hooks = { after_jump = jump_line_start.hooks.after_jump },
+    labels = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        allowed_windows = {
+            current = true,
+            not_current = false,
+        },
+    }) end)     -- Permet les quickjump
 later(function() require('mini.move').setup() end)          -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
 later(function() require('mini.notify').setup() end)        -- Permet l'ajout de notification en haut à droite de l'écran
 later(function() require('mini.pairs').setup() end)         -- Feature pour la gestion des paires ({"etc."})
