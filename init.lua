@@ -83,7 +83,7 @@ later(function()
   })
   -- Possible to immediately execute code which depends on the added plugin
   require('nvim-treesitter.configs').setup({
-    ensure_installed = { 'lua', 'vimdoc', 'rust', 'cpp', 'python' },
+    ensure_installed = { 'lua', 'vimdoc', 'rust', 'cpp', 'cmake', 'python' },
     highlight = { enable = true },
   })
 end)
@@ -108,6 +108,10 @@ end)
 
 later(function() require('vscode').load('dark')end)
 later(function() require('fzf-lua').setup({
+    winopts = {
+        height = 1,
+        width = 1,
+    },
     keymap = {
         fzf = {
             ["ctrl-q"] = "select-all+accept",
