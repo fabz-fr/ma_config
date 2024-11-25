@@ -56,6 +56,7 @@ later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quick
 later(function() add({ source = 'kevinhwang91/nvim-ufo', 
         depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
+later(function() add({ source = 'tversteeg/registers.nvim'}) end)
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
@@ -119,6 +120,8 @@ later(function() require('fzf-lua').setup({
     },
     }) end)
 
+later(function() require("registers").setup() end)
+
 -- later(function() require('mini.align').setup() end)  -- Add alignment of data
 -- later(function() require('mini.base16').setup() end) -- base16 colorscheme
 -- later(function() require('mini.basics').setup() end)    -- Add action for basic programming: moving splits, 
@@ -144,6 +147,7 @@ later(function() require('fzf-lua').setup({
 -- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
 
 later(function() require('mini.ai').setup() end)        -- Add a/i text objects
+-- later(function() require('mini.extra').setup() end)
 -- later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
 later(function() require('mini.clue').setup( {
   triggers = {
@@ -161,7 +165,6 @@ later(function() require('mini.clue').setup( {
 later(function() require('mini.completion').setup() end)    -- Add autocompletion
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
-later(function() require('mini.extra').setup() end)
 -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
 later(function() require('mini.files').setup() end)    -- File manager
 later(function() require('mini.git').setup() end)      -- Gestion de Git 
