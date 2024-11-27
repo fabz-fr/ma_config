@@ -82,6 +82,12 @@ later(function()
     -- Perform action after every checkout
     hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
   })
+
+  -- add({
+  --     source = 'nvim-treesitter/nvim-treesitter-textobjects',
+  --     depends = {'nvim-treesitter/nvim-treesitter'},
+  -- })
+    
   -- Possible to immediately execute code which depends on the added plugin
   require('nvim-treesitter.configs').setup({
     ensure_installed = { 'lua', 'vimdoc', 'rust', 'cpp', 'cmake', 'python' },
@@ -107,7 +113,13 @@ now(function()
     end
 end)
 
-later(function() require('vscode').load('dark')end)
+later(function() 
+    require('vscode').load('dark')
+    -- set cursorline to make cursorline clearer
+    vim.cmd("highlight CursorLine guibg=#404040")
+    vim.cmd("highlight CursorColumn guibg=#404040")
+
+end)
 later(function() require('fzf-lua').setup({
     winopts = {
         height = 1,
@@ -175,7 +187,7 @@ later(function() require('mini.indentscope').setup() end) -- Affiche une ligne p
 later(function() require('mini.jump2d').setup( {
     spotter = jump_line_start.spotter,
     -- hooks = { after_jump = jump_line_start.hooks.after_jump },
-    labels = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        labels = 'abcdefghijklmnopqrstuvwxyz',
         allowed_windows = {
             current = true,
             not_current = false,
