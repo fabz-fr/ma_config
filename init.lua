@@ -70,6 +70,9 @@ later(function() add({
         -- Installs the debug adapters for you
         'williamboman/mason.nvim',
         'jay-babu/mason-nvim-dap.nvim',
+
+        -- Install plugins that allows variables values inside editor
+        'theHamsta/nvim-dap-virtual-text',
     }
 }) end)
 
@@ -223,6 +226,8 @@ later(function()
       },
     }
 
+    require("nvim-dap-virtual-text").setup()
+
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
     dapui.setup {
@@ -255,6 +260,7 @@ later(function()
     vim.keymap.set('n', '<F8>',      dap.step_out   , { desc = 'Debug step out' })
     vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint   , { desc = 'Debug toggle breakpoint' })
     vim.keymap.set('n', '<leader>B', function() dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, { desc = 'Debug toggle breakpoint' })
+    -- vim.keymap.set('n', '<leader>?', function() dapui.eval(nil, {enter = true}) end, { desc = 'show variable' })
 
     dap.adapters.lldb = {
         type = 'executable',
@@ -289,6 +295,25 @@ later(function()
             -- runInTerminal = false,
         },
     }
+    
+    dap.adapters.lldb = {
+        type = "executable",
+        command = "/usr/bin/lldb-vscode-14",
+        name = "lldb",
+    }
+    dap.configurations.rust = 
+    {
+        {
+            name = "d6",
+            type = "lldb",
+            request = "launch",
+            program = function()
+                return vim.fn.getcwd() .. "/target/debug/rust"
+            end,
+            cwd ="${workspaceFolder}",
+            stopOnEntry = false,
+        }
+    }
 
 end)
 
@@ -311,7 +336,7 @@ vim.keymap.set('n', 's', '<NOP>')
 vim.keymap.set('n', 'gt', '<cmd>lua MiniDiff.toggle_overlay()<CR>', { desc= 'Toggle diff overlay'})
 vim.keymap.set('n', '<A-o>', '<cmd>ClangdSwitchSourceHeader<CR>', { desc= 'Switch Source Header'})
 
-
+vim.keymap.set('n', 'yc', function() vim.api.nvim_feedkeys('yygccp', 'm', false) end) 
 -- -------------------------------------------------------------------------------------------------
 -- AUTO COMMANDS
 -- -------------------------------------------------------------------------------------------------
@@ -378,9 +403,10 @@ vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration
 -- vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
 
 
-vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make clean<CR>, ', { desc = '[M]ake [C]lean' })
+vim.keymap.set( {'n'}, '<leader>mc', '<Cmd>AsyncRun make clean<CR>, ', { desc = '[M]ake [C]lean' })
 vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
 vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
+vim.keymap.set( {'n'}, '<leader>mr', '<Cmd>AsyncRun make run<CR>, ', { desc = '[M]ake [R]un' })
 
 vim.keymap.set( {'n', 'x'}, 'f',  '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
 vim.keymap.set( {'n', 'x' }, 'F', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
@@ -409,3 +435,8 @@ later(function()
     vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
     vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 end)
+
+vim.keymap.set( {'n'}, '<leader>fc', '/<<<<CR>', { desc = '[F]ind [C]onflicts'})
+vim.keymap.set({'n'},  '<leader>gcu', 'dd/|||<CR>0v/>>><CR>$x', { desc = '[G]it [C]onflict Choose [U]pstream'})
+vim.keymap.set({'n'},  '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', {desc = '[G]it [C]onflict Choose [B]ase'})
+vim.keymap.set({'n'},  '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed'})
