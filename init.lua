@@ -108,6 +108,9 @@ now(function()
         ensure_installed = servers_to_install,
     })
 
+end)
+
+now(function()
     -- Importer lspconfig
     local lspconfig = require('lspconfig')
     -- Boucle sur chaque serveur dans le tableau et l'initialise
@@ -440,3 +443,5 @@ vim.keymap.set( {'n'}, '<leader>fc', '/<<<<CR>', { desc = '[F]ind [C]onflicts'})
 vim.keymap.set({'n'},  '<leader>gcu', 'dd/|||<CR>0v/>>><CR>$x', { desc = '[G]it [C]onflict Choose [U]pstream'})
 vim.keymap.set({'n'},  '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', {desc = '[G]it [C]onflict Choose [B]ase'})
 vim.keymap.set({'n'},  '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed'})
+
+vim.keymap.set({'n'}, '<leader>ti', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc ='[T]oggle [I]nlay hints'})
