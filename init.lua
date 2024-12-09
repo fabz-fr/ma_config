@@ -445,3 +445,4 @@ vim.keymap.set({'n'},  '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', {desc
 vim.keymap.set({'n'},  '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed'})
 
 vim.keymap.set({'n'}, '<leader>ti', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc ='[T]oggle [I]nlay hints'})
+vim.keymap.set({'n'}, '<leader>=', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf.format() end end, { desc ='Format code'})
