@@ -26,7 +26,7 @@ local available_lsp_servers = {
     cmake = {},
 }
 
-now(function()
+later(function()
     -- Use other plugins with `add()`. It ensures plugin is available in current
     -- session (installs if absent)
     add({
@@ -49,9 +49,9 @@ now(function()
     })
 end)
 
-later(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
+now(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
 
-now(function() add({ source = 'ibhagwan/fzf-lua', }) end)
+later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
 later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', 
         depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
@@ -92,13 +92,13 @@ later(function()
   -- })
     
   -- Possible to immediately execute code which depends on the added plugin
-  require('nvim-treesitter.configs').setup({
+require('nvim-treesitter.configs').setup({
     ensure_installed = { 'lua', 'vimdoc', 'rust', 'cpp', 'cmake', 'python' },
     highlight = { enable = true },
   })
 end)
 
-now(function()
+later(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
         -- require('mason-lspconfig').setup()
@@ -107,10 +107,9 @@ now(function()
     require('mason-tool-installer').setup( { 
         ensure_installed = servers_to_install,
     })
-
 end)
 
-now(function()
+later(function()
     -- Importer lspconfig
     local lspconfig = require('lspconfig')
     -- Boucle sur chaque serveur dans le tableau et l'initialise
@@ -119,7 +118,7 @@ now(function()
     end
 end)
 
-later(function() 
+now(function() 
     require('vscode').load('dark')
     -- set cursorline to make cursorline clearer
     vim.cmd("highlight CursorLine guibg=#404040")
@@ -321,18 +320,19 @@ later(function()
 end)
 
 -- See `:help telescope.builtin`
-local builtin = require('fzf-lua')
-vim.keymap.set('n', '<leader>sf', builtin.files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sw', builtin.grep_cword, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sW', builtin.grep_cWORD, { desc = '[S]earch current [W]ORD' })
-vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', builtin.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+later(function()
+    local builtin = require('fzf-lua')
+    vim.keymap.set('n', '<leader>sf', builtin.files, { desc = '[S]earch [F]iles' })
+    vim.keymap.set('n', '<leader>sw', builtin.grep_cword, { desc = '[S]earch current [W]ord' })
+    vim.keymap.set('n', '<leader>sW', builtin.grep_cWORD, { desc = '[S]earch current [W]ORD' })
+    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>sd', builtin.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+    vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles search' })
-vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
-
+    vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles search' })
+    vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
+end)
 vim.keymap.set('n', '<space>', '<NOP>')
 vim.keymap.set('n', 's', '<NOP>')
 
@@ -363,45 +363,46 @@ later(function() vim.opt.clipboard = 'unnamedplus' end)
 
 -- LSP
 -- -------------------------------------------------------------------------------------------------
--- Jump to the definition of the word under your cursor.
---  This is where a variable was first declared, or where a function is defined, etc.
---  To jump back, press <C-t>.
-vim.keymap.set('n','gd', require('fzf-lua').lsp_definitions, { desc = '[G]oto [D]efinition'})
+later(function()
+    -- Jump to the definition of the word under your cursor.
+    --  This is where a variable was first declared, or where a function is defined, etc.
+    --  To jump back, press <C-t>.
+    vim.keymap.set('n','gd', require('fzf-lua').lsp_definitions, { desc = '[G]oto [D]efinition'})
 
--- Find references for the word under your cursor.
-vim.keymap.set('n','gr', require('fzf-lua').lsp_references, { desc = '[G]oto [R]eferences'})
+    -- Find references for the word under your cursor.
+    vim.keymap.set('n','gr', require('fzf-lua').lsp_references, { desc = '[G]oto [R]eferences'})
 
--- Jump to the implementation of the word under your cursor.
---  Useful when your language has ways of declaring types without an actual implementation.
-vim.keymap.set('n','gI', require('fzf-lua').lsp_implementations, { desc = '[G]oto [I]mplementation'})
+    -- Jump to the implementation of the word under your cursor.
+    --  Useful when your language has ways of declaring types without an actual implementation.
+    vim.keymap.set('n','gI', require('fzf-lua').lsp_implementations, { desc = '[G]oto [I]mplementation'})
 
--- Jump to the type of the word under your cursor.
---  Useful when you're not sure what type a variable is and you want to see
---  the definition of its *type*, not where it was *defined*.
-vim.keymap.set('n','<leader>D', require('fzf-lua').lsp_typedefs, { desc = 'Type [D]efinition'})
+    -- Jump to the type of the word under your cursor.
+    --  Useful when you're not sure what type a variable is and you want to see
+    --  the definition of its *type*, not where it was *defined*.
+    vim.keymap.set('n','<leader>D', require('fzf-lua').lsp_typedefs, { desc = 'Type [D]efinition'})
 
--- Fuzzy find all the symbols in your current document.
---  Symbols are things like variables, functions, types, etc.
-vim.keymap.set('n','<leader>ds', require('fzf-lua').lsp_document_symbols, { desc = '[D]ocument [S]ymbols'})
+    -- Fuzzy find all the symbols in your current document.
+    --  Symbols are things like variables, functions, types, etc.
+    vim.keymap.set('n','<leader>ds', require('fzf-lua').lsp_document_symbols, { desc = '[D]ocument [S]ymbols'})
 
--- Rename the variable under your cursor.
---  Most Language Servers support renaming across files, etc.
-vim.keymap.set('n','<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame'})
+    -- Rename the variable under your cursor.
+    --  Most Language Servers support renaming across files, etc.
+    vim.keymap.set('n','<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame'})
 
--- Execute a code action, usually your cursor needs to be on top of an error
--- or a suggestion from your LSP for this to activate.
-vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction'})
+    -- Execute a code action, usually your cursor needs to be on top of an error
+    -- or a suggestion from your LSP for this to activate.
+    vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction'})
 
--- Search every elements from lsp
-vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et [G]odshit'})
+    -- Search every elements from lsp
+    vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et [G]odshit'})
 
--- Search into dap
-vim.keymap.set('n','<F4>', require('fzf-lua').dap_commands, { desc = 'Get DAP commands'})
---
--- WARN: This is not Goto Definition, this is Goto Declaration.
---  For example, in C this would take you to the header.
-vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration'})
-
+    -- Search into dap
+    vim.keymap.set('n','<F4>', require('fzf-lua').dap_commands, { desc = 'Get DAP commands'})
+    --
+    -- WARN: This is not Goto Definition, this is Goto Declaration.
+    --  For example, in C this would take you to the header.
+    vim.keymap.set('n','gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration'})
+end)
 -- vim.keymap.set('vn', '<leader>j', require('mini.jump2d').start, {desc ='[J]ump'})
 -- vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
 
