@@ -26,9 +26,7 @@ local available_lsp_servers = {
     cmake = {},
 }
 
-later(function()
-    -- Use other plugins with `add()`. It ensures plugin is available in current
-    -- session (installs if absent)
+now(function() 
     add({
     source = 'neovim/nvim-lspconfig',
     -- Supply dependencies near target plugin
@@ -36,6 +34,12 @@ later(function()
                 'williamboman/mason-lspconfig.nvim'},
                 'WhoIsSethDaniel/mason-tool-installer.nvim',
     })
+
+end)
+
+later(function()
+    -- Use other plugins with `add()`. It ensures plugin is available in current
+    -- session (installs if absent)
     add({source = 'williamboman/mason.nvim',
         depends = {'mason-org/mason-registry'}
     })
@@ -109,7 +113,7 @@ later(function()
     })
 end)
 
-later(function()
+now(function()
     -- Importer lspconfig
     local lspconfig = require('lspconfig')
     -- Boucle sur chaque serveur dans le tableau et l'initialise
