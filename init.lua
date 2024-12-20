@@ -21,7 +21,8 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 local available_lsp_servers = {
     clangd = {
         cmd = {
-            "clangd", "--background-index" , "--header-insertion=never"
+            "clangd", "--background-index" , "--header-insertion=never",
+            "--clang-tidy",
         },
     },
     pyright = {},
@@ -101,7 +102,7 @@ later(function()
     
   -- Possible to immediately execute code which depends on the added plugin
 require('nvim-treesitter.configs').setup({
-    ensure_installed = { 'lua', 'vimdoc', 'rust', 'cpp', 'cmake', 'python' },
+    ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash' },
     highlight = { enable = true },
   })
 end)
