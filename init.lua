@@ -19,7 +19,11 @@ require('mini.deps').setup({ path = { package = path_package } })
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 local available_lsp_servers = {
-    clangd = {},
+    clangd = {
+        cmd = {
+            "clangd", "--background-index" , "--header-insertion=never"
+        },
+    },
     pyright = {},
     rust_analyzer = {},
     lua_ls = {},
@@ -37,7 +41,7 @@ now(function()
 
 end)
 
-later(function()
+now(function()
     -- Use other plugins with `add()`. It ensures plugin is available in current
     -- session (installs if absent)
     add({source = 'williamboman/mason.nvim',
@@ -56,7 +60,7 @@ end)
 now(function() add({ source = 'Mofiqul/vscode.nvim'}) end)
 
 later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
-later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
+-- later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
 later(function() add({ source = 'kevinhwang91/nvim-ufo', 
         depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
@@ -102,7 +106,7 @@ require('nvim-treesitter.configs').setup({
   })
 end)
 
-later(function()
+now(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
         -- require('mason-lspconfig').setup()
