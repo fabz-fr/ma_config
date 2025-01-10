@@ -29,6 +29,7 @@ local available_lsp_servers = {
     rust_analyzer = {},
     lua_ls = {},
     cmake = {},
+    bashls = {},
 }
 
 now(function() 
