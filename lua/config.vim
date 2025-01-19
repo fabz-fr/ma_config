@@ -240,12 +240,22 @@ nnoremap [q :cprevious<CR>
 command! Bda %bd
 
 " Quit terminal mode
-tnoremap <ESC> <C-\><C-n>
+"tnoremap <ESC> <C-\><C-n>
+" https://github.com/junegunn/fzf.vim/issues/544#issuecomment-457456166
+tnoremap <expr> <Esc> (&filetype == "fzf") ? "<Esc>" : "<c-\><c-n>"
 
-" --------------------------------------------------------------------------------------------
-" FZF Fuzzy Finder configuration
-" --------------------------------------------------------------------------------------------
-set runtimepath+=~/.fzf
-" Map search file with fuzzy finder
-nmap <leader>sf :FZF<cr>
+
+" Check if the primary init.lua file was loaded
+if exists('g:init_lua_loaded')
+    echo "plugins configuration"
+else
+    " --------------------------------------------------------------------------------------------
+    " FZF Fuzzy Finder configuration
+    " --------------------------------------------------------------------------------------------
+    "set runtimepath+=~/.fzf
+    source ~/.fzf/plugin/fzf.vim
+    " Map search file with fuzzy finder
+    nmap <leader>sf :FZF<cr>
+    echo "no plugin configuration"
+endif
 
