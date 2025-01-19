@@ -76,8 +76,11 @@ set splitbelow
 set list
 set listchars=tab:--,trail:·,space:·,eol:↴
 
+" command is not compatible with vim
+if exists('g:neovim')
 " Preview substitutions live, as you type
-set inccommand=split
+    set inccommand=split
+endif
 
 " Show which line your cursor is on
 set cursorline
@@ -159,7 +162,6 @@ set autowrite
 
 " Set status line display
 "set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ [BUFFER=%n]\ %{strftime('%c')}
-
 
 " STATUS LINE ------------------------------------------------------------ {{{
 
