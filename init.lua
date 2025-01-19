@@ -1,4 +1,5 @@
-require('configuration')
+-- require('config')
+vim.cmd('source ~/.config/nvim/lua/config.vim')
 
 -- Clone 'mini.nvim' manually in a way that it gets managed by 'mini.deps'
 local path_package = vim.fn.stdpath('data') .. '/site/'
@@ -100,7 +101,7 @@ later(function()
   --     source = 'nvim-treesitter/nvim-treesitter-textobjects',
   --     depends = {'nvim-treesitter/nvim-treesitter'},
   -- })
-    
+
   -- Possible to immediately execute code which depends on the added plugin
 require('nvim-treesitter.configs').setup({
     ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash' },
@@ -215,7 +216,6 @@ later(function() require('mini.statusline').setup() end)    -- statusline
 later(function() require('mini.surround').setup() end)      -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
 
-
 -- configure dap plugins
 later(function()
     local dap = require 'dap'
@@ -307,7 +307,7 @@ later(function()
             -- runInTerminal = false,
         },
     }
-    
+
     dap.adapters.lldb = {
         type = "executable",
         command = "/usr/bin/lldb-vscode-14",
@@ -343,13 +343,12 @@ later(function()
     vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles search' })
     vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
 end)
-vim.keymap.set('n', '<space>', '<NOP>')
-vim.keymap.set('n', 's', '<NOP>')
 
 vim.keymap.set('n', 'gt', '<cmd>lua MiniDiff.toggle_overlay()<CR>', { desc= 'Toggle diff overlay'})
 vim.keymap.set('n', '<A-o>', '<cmd>ClangdSwitchSourceHeader<CR>', { desc= 'Switch Source Header'})
 
 vim.keymap.set('n', 'yc', function() vim.api.nvim_feedkeys('yygccp', 'm', false) end) 
+
 -- -------------------------------------------------------------------------------------------------
 -- AUTO COMMANDS
 -- -------------------------------------------------------------------------------------------------
@@ -426,13 +425,6 @@ vim.keymap.set( {'n', 'x'}, 'f',  '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_
 vim.keymap.set( {'n', 'x' }, 'F', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
 vim.keymap.set( {'n', 'x'}, 't',       '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
 vim.keymap.set( {'n', 'x'}, 'T',       '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
-
-vim.keymap.set('t', '<ESC>', '<C-\\><C-n>', { desc = 'Quit terminal mode'})
-
-vim.opt.foldlevel = 99 -- Permet de faire des folds par défaut à partir d'un certains niveau. On met à 99 pour ne pas activer cette fonctionnalité
-vim.opt.foldlevelstart = 99
-vim.opt.foldenable = true 
-vim.opt.foldcolumn = "1" -- Ajoute une colonne pour dire qu'il y a un fold
 
 later(function() 
     -- Option 3: treesitter as a main provider instead
