@@ -24,7 +24,7 @@ local available_lsp_servers = {
     clangd = {
         cmd = {
             "clangd", "--background-index" , "--header-insertion=never",
-            "--clang-tidy",
+--            "--clang-tidy",
         },
     },
     pyright = {},
@@ -417,10 +417,11 @@ end)
 -- vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
 
 
-vim.keymap.set( {'n'}, '<leader>mc', '<Cmd>AsyncRun make clean<CR>, ', { desc = '[M]ake [C]lean' })
-vim.keymap.set( {'n'}, '<leader>M', '<Cmd>AsyncRun make<CR>, ', { desc = '[M]ake' })
-vim.keymap.set( {'n'}, '<leader>mb', '<Cmd>AsyncRun make build<CR>, ', { desc = '[M]ake [B]uild' })
-vim.keymap.set( {'n'}, '<leader>mr', '<Cmd>AsyncRun make run<CR>, ', { desc = '[M]ake [R]un' })
+vim.keymap.set( {'n'}, '<leader>mc', ':AsyncStop<CR> :AsyncRun make clean<CR> ', { desc = '[M]ake [C]lean' })
+vim.keymap.set( {'n'}, '<leader>M',  ':AsyncStop<CR> :AsyncRun make<CR> ', { desc = '[M]ake' })
+vim.keymap.set( {'n'}, '<leader>mb', ':AsyncStop<CR> :AsyncRun make build<CR> ', { desc = '[M]ake [B]uild' })
+vim.keymap.set( {'n'}, '<leader>mr', ':AsyncStop<CR> :AsyncRun make run<CR> ', { desc = '[M]ake [R]un' })
+vim.keymap.set( {'n'}, '<leader>ms', ':AsyncStop<CR>', { desc = '[M]ake [S]stop' })
 
 vim.keymap.set( {'n', 'x'}, 'f',  '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
 vim.keymap.set( {'n', 'x' }, 'F', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = '[F]ind' })
