@@ -93,6 +93,39 @@ vim.opt.formatoptions = "jcql" -- Before the value was jcroql
 -- Set textwidth to 100
 vim.opt.textwidth     = 100
 
+-- Define the toggle table
+local toggles = {
+    ["true"] = "false", ["false"] = "true", ["True"] = "False", ["False"] = "True", ["TRUE"] = "FALSE", ["FALSE"] = "TRUE",
+    ["yes"] = "no", ["no"] = "yes", ["Yes"] = "No", ["No"] = "Yes", ["YES"] = "NO", ["NO"] = "YES",
+    ["on"] = "off", ["off"] = "on", ["On"] = "Off", ["Off"] = "On", ["ON"] = "OFF", ["OFF"] = "ON",
+    ["open"] = "close", ["close"] = "open", ["Open"] = "Close", ["Close"] = "Open",
+    ["dark"] = "light", ["light"] = "dark",
+    ["width"] = "height", ["height"] = "width",
+    ["first"] = "last", ["last"] = "first",
+    ["top"] = "right", ["right"] = "bottom", ["bottom"] = "left", ["left"] = "center", ["center"] = "top",
+}
+
+
+-- Function to toggle the current word
+local function toggle_word()
+    -- Get the word under the cursor
+    local word = vim.fn.expand("<cword>")
+
+    -- Check if the word exists in the toggles table
+    if toggles[word] then
+        -- Replace the word using normal mode command
+        vim.api.nvim_command('normal! "_ciw' .. toggles[word])
+    end
+end
+
+-- Register the function in the global scope for mapping
+_G.toggle_word = toggle_word
+
+-- Map the function to a key
+vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>lua toggle_word()<CR>', { noremap = true, silent = true })
+
+-- Create a command to call the function
+vim.api.nvim_create_user_command('ToggleWord', toggle_word, {})
 
 -- --------------------------------------------------------------------------------------------
 -- KEYBINDINGS / SHORTCUTS CONFIGURATION
