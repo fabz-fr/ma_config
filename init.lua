@@ -69,6 +69,8 @@ later(function() add({ source = 'kevinhwang91/nvim-ufo',
         depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
 later(function() add({ source = 'tversteeg/registers.nvim'}) end)
+later(function() add({ source = 'trkwyk/scrollfix.nvim'}) end)
+later(function() add({ source = 'pocco81/high-str.nvim'}) end)
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
@@ -216,6 +218,10 @@ later(function() require('mini.pairs').setup() end)         -- Feature pour la g
 later(function() require('mini.statusline').setup() end)    -- statusline
 later(function() require('mini.surround').setup() end)      -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
+
+-- later(function() require('scrollfix').setup {
+--     scrollfix = 60, fixeof = false, scrollinfo = true,
+-- }end)
 
 -- configure dap plugins
 later(function()
@@ -451,3 +457,8 @@ vim.keymap.set({'n'},  '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it
 
 vim.keymap.set({'n'}, '<leader>ti', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc ='[T]oggle [I]nlay hints'})
 vim.keymap.set({'n'}, '<leader>=', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf.format() end end, { desc ='Format code'})
+
+vim.keymap.set({'v'}, '<leader>hw', ':<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord'})
+vim.keymap.set({'n'}, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord'})
+vim.keymap.set({'n'}, '<leader>hW', 'viW:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ORD'})
+vim.keymap.set({'v', 'n'}, '<leader>hr', ':<c-u>HSRmHighlight<CR>', { desc = '[H]ighlight [R]emove'})
