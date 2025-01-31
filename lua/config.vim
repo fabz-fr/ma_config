@@ -188,7 +188,9 @@ set laststatus=2
 
 " Delete <space> and s map
 nnoremap <space> <NOP>
+vnoremap <space> <NOP>
 nnoremap s <NOP>
+vnoremap s <NOP>
 
 " Set <space> as the leader key
 let mapleader = ' '
