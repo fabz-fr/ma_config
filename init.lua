@@ -27,7 +27,7 @@ local available_lsp_servers = {
 --            "--clang-tidy",
         },
     },
-    pyright = {},
+    pyright = {}, -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
     rust_analyzer = {},
     lua_ls = {},
     cmake = {},
@@ -462,3 +462,29 @@ vim.keymap.set({'v'}, '<leader>hw', ':<c-u>HSHighlight 1<CR>', { desc = '[H]ighl
 vim.keymap.set({'n'}, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord'})
 vim.keymap.set({'n'}, '<leader>hW', 'viW:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ORD'})
 vim.keymap.set({'v', 'n'}, '<leader>hr', ':<c-u>HSRmHighlight<CR>', { desc = '[H]ighlight [R]emove'})
+
+vim.g.diagnostics_active = true
+function _G.toggle_diagnostics()
+  if vim.g.diagnostics_active then
+    vim.g.diagnostics_active = false
+    vim.diagnostic.config({ virtual_text = false })
+    print('disable diagnostics')
+    -- vim.lsp.diagnostic.clear(0)
+    -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+  else
+    vim.g.diagnostics_active = true
+    vim.diagnostic.config({ virtual_text = true })
+    print('enable diagnostics')
+    -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    --   vim.lsp.diagnostic.on_publish_diagnostics, {
+    --     virtual_text = true,
+    --     signs = true,
+    --     underline = true,
+    --     update_in_insert = false,
+    --   }
+    -- )
+  end
+end
+
+vim.keymap.set({'n'}, '<leader>td', ':call v:lua.toggle_diagnostics()<CR>',  {desc ='[T]oggle [D]iagnostics'})
+
