@@ -71,6 +71,7 @@ later(function() add({ source = 'skywind3000/asyncrun.vim'}) end)
 later(function() add({ source = 'tversteeg/registers.nvim'}) end)
 later(function() add({ source = 'trkwyk/scrollfix.nvim'}) end)
 later(function() add({ source = 'pocco81/high-str.nvim'}) end)
+later(function() add({ source = 'okuuva/auto-save.nvim'}) end)
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
@@ -218,6 +219,10 @@ later(function() require('mini.pairs').setup() end)         -- Feature pour la g
 later(function() require('mini.statusline').setup() end)    -- statusline
 later(function() require('mini.surround').setup() end)      -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)       -- gère les buffers dans des onglets "tabs"
+
+later(function() require('auto-save').setup({
+    event = { "insertLeave",}, -- Several other value can set here: TextChanged
+}) end)
 
 -- later(function() require('scrollfix').setup {
 --     scrollfix = 60, fixeof = false, scrollinfo = true,
@@ -407,7 +412,7 @@ later(function()
 
     -- Execute a code action, usually your cursor needs to be on top of an error
     -- or a suggestion from your LSP for this to activate.
-    vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction'})
+    vim.keymap.set('n','<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction (diagnostics)'})
 
     -- Search every elements from lsp
     vim.keymap.set('n','<leader>gg', require('fzf-lua').lsp_finder, { desc = '[G]et [G]odshit'})
