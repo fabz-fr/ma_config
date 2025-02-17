@@ -72,6 +72,7 @@ later(function() add({ source = 'tversteeg/registers.nvim'}) end)
 later(function() add({ source = 'trkwyk/scrollfix.nvim'}) end)
 later(function() add({ source = 'pocco81/high-str.nvim'}) end)
 later(function() add({ source = 'okuuva/auto-save.nvim'}) end)
+later(function() add({ source = 'Saghen/blink.cmp'}) end)
 
 later(function() add({
     source = "mfussenegger/nvim-dap",
@@ -194,7 +195,7 @@ later(function() require('mini.clue').setup( {
     { mode = 'n', keys = 'z' },
 } }
     ) end)      -- Add commands clues in a split
-later(function() require('mini.completion').setup() end)    -- Add autocompletion
+-- later(function() require('mini.completion').setup() end)    -- Add autocompletion now using blink
 later(function() require('mini.cursorword').setup() end)    -- highlight word under cursor
 later(function() require('mini.diff').setup() end)      -- Add hint about diff in git
 -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
@@ -223,6 +224,10 @@ later(function() require('mini.tabline').setup() end)       -- gère les buffers
 later(function() require('auto-save').setup({
     event = { "insertLeave",}, -- Several other value can set here: TextChanged
 }) end)
+
+later(function() require('blink.cmp').setup({
+    signature = { enabled = true },
+}) end) -- instead of mini.completion
 
 -- later(function() require('scrollfix').setup {
 --     scrollfix = 60, fixeof = false, scrollinfo = true,
