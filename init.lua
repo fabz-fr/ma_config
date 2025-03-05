@@ -134,12 +134,14 @@ now(function()
     end
 end)
 
-now(function() 
-    require('vscode').load('dark')
+now(function()
+    vim.cmd.colorscheme "vscode"
+    require('vscode').setup({})
+    vim.api.nvim_set_hl(0, 'DiagnosticDeprecated', { strikethrough = false })
+
     -- set cursorline to make cursorline clearer
     vim.cmd("highlight CursorLine guibg=#404040")
     vim.cmd("highlight CursorColumn guibg=#404040")
-
 end)
 later(function() require('fzf-lua').setup({
     winopts = {
