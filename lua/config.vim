@@ -78,7 +78,7 @@ set listchars=tab:--,trail:·,space:·,eol:↴
 
 " command is not compatible with vim
 if exists('g:neovim')
-" Preview substitutions live, as you type
+    " Preview substitutions live, as you type
     set inccommand=split
 endif
 
