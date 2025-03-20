@@ -500,3 +500,13 @@ end
 
 vim.keymap.set({'n'}, '<leader>td', ':call v:lua.toggle_diagnostics()<CR>',  {desc ='[T]oggle [D]iagnostics'})
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "qf",
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true -- Évite les coupures de mots en plein milieu
+    end,
+})
+
+
+
