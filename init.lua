@@ -70,13 +70,20 @@ later(function()
         source = 'kevinhwang91/nvim-ufo',
         depends = { 'kevinhwang91/promise-async' },
     })
-end)                                                        -- Better fold handling
+end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim' }) end)
 later(function() add({ source = 'tversteeg/registers.nvim' }) end)
 later(function() add({ source = 'trkwyk/scrollfix.nvim' }) end)
 later(function() add({ source = 'pocco81/high-str.nvim' }) end)
 later(function() add({ source = 'okuuva/auto-save.nvim' }) end)
-later(function() add({ source = 'Saghen/blink.cmp' }) end)
+later(function()
+    add({
+        source = 'Saghen/blink.cmp',
+        depends = { "rafamadriz/friendly-snippets" },
+        checkout = "v1.0.0", -- check releases for latest tag
+        -- hooks = { post_checkout = function() end },
+    })
+end)
 
 later(function()
     add({
@@ -246,7 +253,7 @@ later(function()
     require('blink.cmp').setup({
         signature = { enabled = true },
     })
-end)    -- instead of mini.completion
+end) -- instead of mini.completion
 
 -- later(function() require('scrollfix').setup {
 --     scrollfix = 60, fixeof = false, scrollinfo = true,
@@ -489,11 +496,23 @@ vim.keymap.set({ 'n' }, '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', { de
 vim.keymap.set({ 'n' }, '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed' })
 
 vim.keymap.set({ 'n' }, '<leader>ti',
-    function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp
-                .inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc = '[T]oggle [I]nlay hints' })
+    function()
+        if next(vim.lsp.get_active_clients()) == nil then
+            print("No client for Inlay hints")
+        else
+            vim.lsp
+                .inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end
+    end, { desc = '[T]oggle [I]nlay hints' })
 vim.keymap.set({ 'n' }, '<leader>=',
-    function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf
-                .format() end end, { desc = 'Format code' })
+    function()
+        if next(vim.lsp.get_active_clients()) == nil then
+            print("No client for formatting code")
+        else
+            vim.lsp.buf
+                .format()
+        end
+    end, { desc = 'Format code' })
 
 vim.keymap.set({ 'v' }, '<leader>hw', ':<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord' })
 vim.keymap.set({ 'n' }, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord' })
