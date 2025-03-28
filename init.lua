@@ -1,4 +1,3 @@
--- require('config')
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 
@@ -17,7 +16,6 @@ end
 require('mini.deps').setup({ path = { package = path_package } })
 
 -- Use 'mini.deps'. `now()` and `later()` are helpers for a safe two-stage
--- startup and are optional.
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
 local available_lsp_servers = {
@@ -45,8 +43,6 @@ now(function()
 end)
 
 now(function()
-    -- Use other plugins with `add()`. It ensures plugin is available in current
-    -- session (installs if absent)
     add({
         source = 'williamboman/mason.nvim',
         depends = { 'mason-org/mason-registry' }
@@ -80,10 +76,19 @@ later(function()
     add({
         source = 'Saghen/blink.cmp',
         depends = { "rafamadriz/friendly-snippets" },
-        checkout = "v1.0.0", -- check releases for latest tag
-        -- hooks = { post_checkout = function() end },
+        checkout = "v1.0.0",
     })
 end)
+
+later(function()
+    add({
+        source = "mikavilpas/yazi.nvim",
+        depends = { "folke/snacks.nvim",
+            "nvim-lua/plenary.nvim" },
+    })
+end)
+
+
 
 later(function()
     add({
@@ -114,11 +119,6 @@ later(function()
         -- Perform action after every checkout
         hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
     })
-
-    -- add({
-    --     source = 'nvim-treesitter/nvim-treesitter-textobjects',
-    --     depends = {'nvim-treesitter/nvim-treesitter'},
-    -- })
 
     -- Possible to immediately execute code which depends on the added plugin
     require('nvim-treesitter.configs').setup({
@@ -214,12 +214,12 @@ later(function()
         }
     }
     )
-end)                                                      -- Add commands clues in a split
+end)                                                     -- Add commands clues in a split
 -- later(function() require('mini.completion').setup() end)    -- Add autocompletion now using blink
-later(function() require('mini.cursorword').setup() end)  -- highlight word under cursor
-later(function() require('mini.diff').setup() end)        -- Add hint about diff in git
+later(function() require('mini.cursorword').setup() end) -- highlight word under cursor
+later(function() require('mini.diff').setup() end)       -- Add hint about diff in git
 -- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
-later(function() require('mini.files').setup() end)       -- File manager
+-- later(function() require('mini.files').setup() end)       -- File manager
 later(function() require('mini.git').setup() end)         -- Gestion de Git
 -- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope
@@ -519,30 +519,55 @@ vim.keymap.set({ 'n' }, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H
 vim.keymap.set({ 'n' }, '<leader>hW', 'viW:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ORD' })
 vim.keymap.set({ 'v', 'n' }, '<leader>hr', ':<c-u>HSRmHighlight<CR>', { desc = '[H]ighlight [R]emove' })
 
-vim.g.diagnostics_active = true
-function _G.toggle_diagnostics()
-    if vim.g.diagnostics_active then
-        vim.g.diagnostics_active = false
-        vim.diagnostic.config({ virtual_text = false })
-        print('disable diagnostics')
-        -- vim.lsp.diagnostic.clear(0)
-        -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
-    else
-        vim.g.diagnostics_active = true
-        vim.diagnostic.config({ virtual_text = true })
-        print('enable diagnostics')
-        -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-        --   vim.lsp.diagnostic.on_publish_diagnostics, {
-        --     virtual_text = true,
-        --     signs = true,
-        --     underline = true,
-        --     update_in_insert = false,
-        --   }
-        -- )
-    end
-end
+-- vim.g.diagnostics_active = true
+-- function _G.toggle_diagnostics()
+--     if vim.g.diagnostics_active then
+--         vim.g.diagnostics_active = false
+--         vim.diagnostic.config({ virtual_text = false })
+--         print('disable diagnostics')
+--         -- vim.lsp.diagnostic.clear(0)
+--         -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+--     else
+--         vim.g.diagnostics_active = true
+--         vim.diagnostic.config({ virtual_text = true })
+--         print('enable diagnostics')
+--         -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--         --   vim.lsp.diagnostic.on_publish_diagnostics, {
+--         --     virtual_text = true,
+--         --     signs = true,
+--         --     underline = true,
+--         --     update_in_insert = false,
+--         --   }
+--         -- )
+--     end
+-- end
+--
 
-vim.keymap.set({ 'n' }, '<leader>td', ':call v:lua.toggle_diagnostics()<CR>', { desc = '[T]oggle [D]iagnostics' })
+local diagnostic_signs = {
+    [vim.diagnostic.severity.ERROR] = "",
+    [vim.diagnostic.severity.WARN] = "",
+    [vim.diagnostic.severity.INFO] = "",
+    [vim.diagnostic.severity.HINT] = "󰌵",
+}
+
+vim.diagnostic.config({
+    -- virtual_text = { prefix = "", format = diagnostic_format, },
+    signs = {
+        text = diagnostic_signs,
+    },
+    virtual_lines = {
+        current_line = true,
+    },
+    underline = true,
+    severity_sort = true,
+})
+
+function toggle_diagnostics()
+    vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end
+toggle_diagnostics()
+
+vim.keymap.set("n", "<leader>td", "<cmd>lua toggle_diagnostics()<cr>", { desc = "Toggle diagnostics" })
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
@@ -551,3 +576,5 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.linebreak = true -- Évite les coupures de mots en plein milieu
     end,
 })
+
+vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
