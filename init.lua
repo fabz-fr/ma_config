@@ -519,30 +519,6 @@ vim.keymap.set({ 'n' }, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H
 vim.keymap.set({ 'n' }, '<leader>hW', 'viW:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ORD' })
 vim.keymap.set({ 'v', 'n' }, '<leader>hr', ':<c-u>HSRmHighlight<CR>', { desc = '[H]ighlight [R]emove' })
 
--- vim.g.diagnostics_active = true
--- function _G.toggle_diagnostics()
---     if vim.g.diagnostics_active then
---         vim.g.diagnostics_active = false
---         vim.diagnostic.config({ virtual_text = false })
---         print('disable diagnostics')
---         -- vim.lsp.diagnostic.clear(0)
---         -- vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
---     else
---         vim.g.diagnostics_active = true
---         vim.diagnostic.config({ virtual_text = true })
---         print('enable diagnostics')
---         -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
---         --   vim.lsp.diagnostic.on_publish_diagnostics, {
---         --     virtual_text = true,
---         --     signs = true,
---         --     underline = true,
---         --     update_in_insert = false,
---         --   }
---         -- )
---     end
--- end
---
-
 local diagnostic_signs = {
     [vim.diagnostic.severity.ERROR] = "",
     [vim.diagnostic.severity.WARN] = "",
@@ -565,6 +541,7 @@ vim.diagnostic.config({
 function toggle_diagnostics()
     vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end
+
 toggle_diagnostics()
 
 vim.keymap.set("n", "<leader>td", "<cmd>lua toggle_diagnostics()<cr>", { desc = "Toggle diagnostics" })
