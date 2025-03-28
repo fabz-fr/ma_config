@@ -1,7 +1,12 @@
+----------------------------------------------------------------------------------------------------
+-- Set flag for config.nvim
+----------------------------------------------------------------------------------------------------
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 
+----------------------------------------------------------------------------------------------------
 -- Clone 'mini.nvim' manually in a way that it gets managed by 'mini.deps'
+----------------------------------------------------------------------------------------------------
 local path_package = vim.fn.stdpath('data') .. '/site/'
 local mini_path = path_package .. 'pack/deps/start/mini.nvim'
 if not vim.loop.fs_stat(mini_path) then
@@ -12,19 +17,18 @@ if not vim.loop.fs_stat(mini_path) then
     vim.cmd('echo "Installed `mini.nvim`" | redraw')
 end
 
+----------------------------------------------------------------------------------------------------
 -- Set up 'mini.deps' (customize to your liking)
-require('mini.deps').setup({ path = { package = path_package } })
-
 -- Use 'mini.deps'. `now()` and `later()` are helpers for a safe two-stage
+----------------------------------------------------------------------------------------------------
+require('mini.deps').setup({ path = { package = path_package } })
 local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 
+----------------------------------------------------------------------------------------------------
+-- Define LSP servers
+----------------------------------------------------------------------------------------------------
 local available_lsp_servers = {
-    clangd = {
-        cmd = {
-            "clangd", "--background-index", "--header-insertion=never",
-            --            "--clang-tidy",
-        },
-    },
+    clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--clang-tidy",]] }, },
     pyright = {}, -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
     rust_analyzer = {},
     lua_ls = {},
@@ -32,101 +36,43 @@ local available_lsp_servers = {
     bashls = {},
 }
 
-now(function()
-    add({
-        source = 'neovim/nvim-lspconfig',
-        -- Supply dependencies near target plugin
-        depends = { 'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim' },
-        'WhoIsSethDaniel/mason-tool-installer.nvim',
-    })
-end)
-
-now(function()
-    add({
-        source = 'williamboman/mason.nvim',
-        depends = { 'mason-org/mason-registry' }
-    })
-    add({
-        source = 'williamboman/mason-lspconfig.nvim',
-        depends = { 'williamboman/mason.nvim' },
-    })
-    add({
-        source = 'WhoIsSethDaniel/mason-tool-installer.nvim',
-        depends = { 'williamboman/mason.nvim' },
-    })
-end)
-
-now(function() add({ source = 'Mofiqul/vscode.nvim' }) end)
-
+----------------------------------------------------------------------------------------------------
+-- Download Plugins
+----------------------------------------------------------------------------------------------------
+---@format disable
+now(function()   add({ source = 'neovim/nvim-lspconfig',                     depends = { 'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim' }, 'WhoIsSethDaniel/mason-tool-installer.nvim', }) end)
+now(function()   add({ source = 'williamboman/mason.nvim',                   depends = { 'mason-org/mason-registry' } })
+                 add({ source = 'williamboman/mason-lspconfig.nvim',         depends = { 'williamboman/mason.nvim' }, })
+                 add({ source = 'WhoIsSethDaniel/mason-tool-installer.nvim', depends = { 'williamboman/mason.nvim' }, }) end)
+now(function()   add({ source = 'Mofiqul/vscode.nvim' }) end)
 later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
--- later(function() add({ source = 'kevinhwang91/nvim-bqf', }) end) -- Better quickfix handling
-later(function()
-    add({
-        source = 'kevinhwang91/nvim-ufo',
-        depends = { 'kevinhwang91/promise-async' },
-    })
-end) -- Better fold handling
+later(function() add({ source = 'kevinhwang91/nvim-ufo',                     depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim' }) end)
 later(function() add({ source = 'tversteeg/registers.nvim' }) end)
-later(function() add({ source = 'trkwyk/scrollfix.nvim' }) end)
-later(function() add({ source = 'pocco81/high-str.nvim' }) end)
 later(function() add({ source = 'okuuva/auto-save.nvim' }) end)
-later(function()
-    add({
-        source = 'Saghen/blink.cmp',
-        depends = { "rafamadriz/friendly-snippets" },
-        checkout = "v1.0.0",
-    })
-end)
+later(function() add({ source = 'Saghen/blink.cmp',                          depends = { "rafamadriz/friendly-snippets" }, checkout = "v1.0.0", }) end)
+later(function() add({ source = "mikavilpas/yazi.nvim",                      depends = { "folke/snacks.nvim", "nvim-lua/plenary.nvim" }, }) end)
+later(function() add({ source = "mfussenegger/nvim-dap",
+                    depends = { 'rcarriga/nvim-dap-ui',           --[[Creates a beautiful debugger UI]]
+                                'nvim-neotest/nvim-nio',          --[[Required dependency for nvim-dap-ui]]
+                                'williamboman/mason.nvim',        --[[Installs the debug adapters for you]]
+                                'jay-babu/mason-nvim-dap.nvim',   --[[Installs the debug adapters for you]]
+                                'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]] } }) end)
+now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
+---@format enable
 
-later(function()
-    add({
-        source = "mikavilpas/yazi.nvim",
-        depends = { "folke/snacks.nvim",
-            "nvim-lua/plenary.nvim" },
-    })
-end)
-
-
-
-later(function()
-    add({
-        source = "mfussenegger/nvim-dap",
-        depends = {
-            -- Creates a beautiful debugger UI
-            'rcarriga/nvim-dap-ui',
-
-            -- Required dependency for nvim-dap-ui
-            'nvim-neotest/nvim-nio',
-
-            -- Installs the debug adapters for you
-            'williamboman/mason.nvim',
-            'jay-babu/mason-nvim-dap.nvim',
-
-            -- Install plugins that allows variables values inside editor
-            'theHamsta/nvim-dap-virtual-text',
-        }
-    })
-end)
-
-later(function()
-    add({
-        source = 'nvim-treesitter/nvim-treesitter',
-        -- Use 'master' while monitoring updates in 'main'
-        checkout = 'master',
-        monitor = 'main',
-        -- Perform action after every checkout
-        hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
-    })
-
-    -- Possible to immediately execute code which depends on the added plugin
-    require('nvim-treesitter.configs').setup({
+----------------------------------------------------------------------------------------------------
+-- Install TreeSitter
+----------------------------------------------------------------------------------------------------
+later(function() require('nvim-treesitter.configs').setup({ -- Possible to immediately execute code which depends on the added plugin
         ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash' },
         highlight = { enable = true },
     })
 end)
 
+----------------------------------------------------------------------------------------------------
+-- Install Mason & LSP servers
+----------------------------------------------------------------------------------------------------
 now(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
@@ -147,6 +93,9 @@ now(function()
     end
 end)
 
+----------------------------------------------------------------------------------------------------
+-- Install colorscheme
+----------------------------------------------------------------------------------------------------
 now(function()
     vim.cmd.colorscheme "vscode"
     require('vscode').setup({})
@@ -156,51 +105,20 @@ now(function()
     vim.cmd("highlight CursorLine guibg=#404040")
     vim.cmd("highlight CursorColumn guibg=#404040")
 end)
+
+----------------------------------------------------------------------------------------------------
+-- Install fzf-lua
+----------------------------------------------------------------------------------------------------
 later(function()
     require('fzf-lua').setup({
-        winopts = {
-            height = 1,
-            width = 1,
-        },
-        keymap = {
-            fzf = {
-                ["ctrl-q"] = "select-all+accept",
-            },
-        },
+        winopts = { height = 1, width = 1, },
+        keymap  = { fzf = { ["ctrl-q"] = "select-all+accept", }, },
     })
 end)
 
 later(function() require("registers").setup() end)
-
--- later(function() require('mini.align').setup() end)  -- Add alignment of data
--- later(function() require('mini.base16').setup() end) -- base16 colorscheme
--- later(function() require('mini.basics').setup() end)    -- Add action for basic programming: moving splits,
--- later(function() require('mini.bracketed').setup() end) -- Add several jumps based on brackets []
--- later(function() require('mini.bufremove').setup() end) -- Add command to remove and hide buffers
--- later(function() require('mini.colors').setup() end) -- Tweak colorscheme
--- later(function() require('mini.comment').setup() end)    -- Add comments (already in neovim)
--- later(function() require('mini.deps').setup() end)   -- Package manager (is already installed)
--- later(function() require('mini.doc').setup() end)    -- Gestion de la doc pour neovim
--- later(function() require('mini.fuzzy').setup() end)    -- Fuzzy sorter
--- later(function() require('mini.hipatterns').setup() end)  -- Gère l'arrière plan de certains patterns et couleurs
--- later(function() require('mini.hues').setup() end) -- Change le fond d'écran
--- later(function() require('mini.map').setup() end)       -- Ajoute une barre latérale à droite représentant globalement l'état du fichier
--- later(function() require('mini.misc').setup() end)       -- Ajoute des fonctions lua
--- later(function() require('mini.jump').setup() end)       -- améliore t T f F en permettant des jumps sur plusieurs ligne ainsi que plusieurs sauts.
--- later(function() require('mini.operators').setup() end)  -- Fait un truc bizarre dans les copier
--- later(function() require('mini.pick').setup() end)       -- équivalent de fzf et telescope
--- later(function() require('mini.sessions').setup() end)   -- gestionnaire de sessions nvim. Intéressant si on veut avoir des workspaces
--- later(function() require('mini.splitjoin').setup() end)     -- Change la mise en forme de tableau et liste
--- later(function() require('mini.starter').setup() end)    -- Change l'écran de démarrage
--- later(function() require('mini.test').setup() end)       -- Lance des tests
--- later(function() require('mini.trailspace').setup() end) -- Highlight les trailings spaces
--- later(function() require('mini.visits').setup() end) -- Garde une liste des fichiers visités
-
 later(function() require('mini.ai').setup() end) -- Add a/i text objects
--- later(function() require('mini.extra').setup() end)
--- later(function() require('mini.animate').setup() end)   -- Animate actions in neovim to observe cursor jumps
-later(function()
-    require('mini.clue').setup({
+later(function() require('mini.clue').setup({
         triggers = {
             -- Leader triggers
             { mode = 'n', keys = '<Leader>' },
@@ -214,40 +132,21 @@ later(function()
         }
     }
     )
-end)                                                     -- Add commands clues in a split
--- later(function() require('mini.completion').setup() end)    -- Add autocompletion now using blink
+end)
 later(function() require('mini.cursorword').setup() end) -- highlight word under cursor
 later(function() require('mini.diff').setup() end)       -- Add hint about diff in git
--- Add extra picker for mini.pick add extends text object from mini.ai add highlighter
--- later(function() require('mini.files').setup() end)       -- File manager
 later(function() require('mini.git').setup() end)         -- Gestion de Git
--- later(function() require('mini.icons').setup() end)      -- Ajoute des icônes dans les menus nvim
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope
 local jump2d = require('mini.jump2d')
-local jump_line_start = jump2d.builtin_opts.word_start    -- line_start
-later(function()
-    require('mini.jump2d').setup({
-        spotter = jump_line_start.spotter,
-        -- hooks = { after_jump = jump_line_start.hooks.after_jump },
-        labels = 'abcdefghijklmnopqrstuvwxyz',
-        allowed_windows = {
-            current = true,
-            not_current = false,
-        },
-    })
-end)                                                     -- Permet les quickjump
+local jump_line_start = jump2d.builtin_opts.word_start
+later(function() require('mini.jump2d').setup({ spotter = jump_line_start.spotter, labels = 'abcdefghijklmnopqrstuvwxyz', allowed_windows = { current = true, not_current = false, }, }) end)                                                     -- Permet les quickjump
 later(function() require('mini.move').setup() end)       -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
 later(function() require('mini.notify').setup() end)     -- Permet l'ajout de notification en haut à droite de l'écran
 later(function() require('mini.pairs').setup() end)      -- Feature pour la gestion des paires ({"etc."})
 later(function() require('mini.statusline').setup() end) -- statusline
 later(function() require('mini.surround').setup() end)   -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)    -- gère les buffers dans des onglets "tabs"
-
-later(function()
-    require('auto-save').setup({
-        event = { "insertLeave", }, -- Several other value can set here: TextChanged
-    })
-end)
+later(function() require('auto-save').setup({ event = { "insertLeave", }, --[[Several other value can set here: TextChanged]] }) end)
 
 later(function()
     require('blink.cmp').setup({
@@ -260,11 +159,9 @@ later(function()
     })
 end) -- instead of mini.completion
 
--- later(function() require('scrollfix').setup {
---     scrollfix = 60, fixeof = false, scrollinfo = true,
--- }end)
-
--- configure dap plugins
+----------------------------------------------------------------------------------------------------
+-- Install dap plugins
+----------------------------------------------------------------------------------------------------
 later(function()
     local dap = require 'dap'
     local dapui = require 'dapui'
@@ -377,7 +274,6 @@ later(function()
     }
 end)
 
--- See `:help telescope.builtin`
 later(function()
     local builtin = require('fzf-lua')
     vim.keymap.set('n', '<leader>sf', builtin.files, { desc = '[S]earch [F]iles' })
@@ -399,10 +295,8 @@ vim.keymap.set('n', 'yc', function() vim.api.nvim_feedkeys('yygccp', 'm', false)
 
 -- -------------------------------------------------------------------------------------------------
 -- AUTO COMMANDS
--- -------------------------------------------------------------------------------------------------
 -- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
+-- -------------------------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -410,7 +304,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
         vim.highlight.on_yank()
     end,
 })
---
+
 -- -------------------------------------------------------------------------------------------------
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -500,41 +394,19 @@ vim.keymap.set({ 'n' }, '<leader>gcu', 'dd/|||<CR>0v/>>><CR>$x', { desc = '[G]it
 vim.keymap.set({ 'n' }, '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', { desc = '[G]it [C]onflict Choose [B]ase' })
 vim.keymap.set({ 'n' }, '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed' })
 
-vim.keymap.set({ 'n' }, '<leader>ti',
-    function()
-        if next(vim.lsp.get_active_clients()) == nil then
-            print("No client for Inlay hints")
-        else
-            vim.lsp
-                .inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-        end
-    end, { desc = '[T]oggle [I]nlay hints' })
-vim.keymap.set({ 'n' }, '<leader>=',
-    function()
-        if next(vim.lsp.get_active_clients()) == nil then
-            print("No client for formatting code")
-        else
-            vim.lsp.buf
-                .format()
-        end
-    end, { desc = 'Format code' })
+vim.keymap.set({ 'n' }, '<leader>ti', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp .inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc = '[T]oggle [I]nlay hints' })
+vim.keymap.set({ 'n' }, '<leader>=', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf .format() end end, { desc = 'Format code' })
 
-vim.keymap.set({ 'v' }, '<leader>hw', ':<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord' })
-vim.keymap.set({ 'n' }, '<leader>hw', 'viw:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ord' })
-vim.keymap.set({ 'n' }, '<leader>hW', 'viW:<c-u>HSHighlight 1<CR>', { desc = '[H]ighlight [W]ORD' })
-vim.keymap.set({ 'v', 'n' }, '<leader>hr', ':<c-u>HSRmHighlight<CR>', { desc = '[H]ighlight [R]emove' })
-
-local diagnostic_signs = {
+vim.diagnostic.config({
+    -- virtual_text = { prefix = "", format = diagnostic_format, },
+    signs = {
+        text = {
     [vim.diagnostic.severity.ERROR] = "",
     [vim.diagnostic.severity.WARN] = "",
     [vim.diagnostic.severity.INFO] = "",
     [vim.diagnostic.severity.HINT] = "󰌵",
 }
-
-vim.diagnostic.config({
-    -- virtual_text = { prefix = "", format = diagnostic_format, },
-    signs = {
-        text = diagnostic_signs,
+,
     },
     virtual_lines = {
         current_line = true,
@@ -551,6 +423,7 @@ toggle_diagnostics()
 
 vim.keymap.set("n", "<leader>td", "<cmd>lua toggle_diagnostics()<cr>", { desc = "Toggle diagnostics" })
 
+-- autocommand to wrap line in quickfix list
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function()
@@ -560,6 +433,5 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
-
 
 vim.o.winborder = 'rounded'
