@@ -261,3 +261,10 @@ else
     echo "no plugin configuration"
 endif
 
+
+" Automatically refresh file when externally modified 
+set autoread
+augroup AutoReload
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold * checktime
+augroup END
