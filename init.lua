@@ -251,6 +251,11 @@ end)
 
 later(function()
     require('blink.cmp').setup({
+        completion = {
+            menu = { auto_show = true },
+            documentation = { auto_show = true },
+        },
+
         signature = { enabled = true },
     })
 end) -- instead of mini.completion
@@ -555,3 +560,6 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
+
+
+vim.o.winborder = 'rounded'
