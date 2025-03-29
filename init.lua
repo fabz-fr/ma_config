@@ -76,7 +76,6 @@ end)
 now(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
-    -- require('mason-lspconfig').setup()
     local servers_to_install = vim.tbl_keys(available_lsp_servers or {})
 
     require('mason-tool-installer').setup({
@@ -154,6 +153,11 @@ later(function()
             menu = { auto_show = true },
             documentation = { auto_show = true },
         },
+            -- Default list of enabled providers defined so that you can extend it
+    -- elsewhere in your config, without redefining it, due to `opts_extend`
+    sources = {
+      default = { 'lsp', 'path', 'snippets', 'buffer' },
+    },
 
         signature = { enabled = true },
     })
