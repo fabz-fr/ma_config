@@ -3,6 +3,7 @@
 ----------------------------------------------------------------------------------------------------
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
+vim.cmd('source ~/.config/nvim/lua/highlight.lua')
 
 ----------------------------------------------------------------------------------------------------
 -- Clone 'mini.nvim' manually in a way that it gets managed by 'mini.deps'
