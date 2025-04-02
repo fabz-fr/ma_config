@@ -86,7 +86,7 @@ endif
 set cursorline
 
 " Minimal number of screen lines to keep above and below the cursor
-set scrolloff=10
+set scrolloff=5
 
 " Gestion des tabulations
 set shiftwidth=4
