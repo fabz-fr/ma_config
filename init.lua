@@ -60,6 +60,8 @@ later(function() add({ source = "mfussenegger/nvim-dap",
                                 'jay-babu/mason-nvim-dap.nvim',   --[[Installs the debug adapters for you]]
                                 'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]] } }) end)
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
+later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
+
 ---@format enable
 
 ----------------------------------------------------------------------------------------------------
@@ -147,6 +149,7 @@ later(function() require('mini.statusline').setup() end) -- statusline
 later(function() require('mini.surround').setup() end)   -- Fonctionalité pour ajouter et gérer les caractères de wrapping '([{}])'
 later(function() require('mini.tabline').setup() end)    -- gère les buffers dans des onglets "tabs"
 later(function() require('auto-save').setup({ event = { "insertLeave", }, --[[Several other value can set here: TextChanged]] }) end)
+later(function() require('hlpatterns').setup({ highlight_pattern_keymap = "<leader>hw", delete_all_highlight_keymap = "<leader>hd", highlight_selected_keymap = "<leader>hw", }) end)
 
 later(function()
     require('blink.cmp').setup({
