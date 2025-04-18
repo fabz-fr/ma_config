@@ -30,7 +30,8 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 ----------------------------------------------------------------------------------------------------
 local available_lsp_servers = {
     clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--clang-tidy",]] }, },
-    pyright = {}, -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
+    -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
+    pyright = {on_attach = on_attach, settings = {pyright = {autoImportCompletion = true,}, python = {analysis = {autoSearchPaths = true,diagnosticMode = 'openFilesOnly',useLibraryCodeForTypes = true,typeCheckingMode = 'on'}}}},
     rust_analyzer = {},
     lua_ls = {},
     cmake = {},
@@ -440,6 +441,6 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-vim.keymap.set({ 'n' }, '<leader>e', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
+vim.keymap.set({ 'n' }, '<leader>y', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
 
 vim.o.winborder = 'rounded'
