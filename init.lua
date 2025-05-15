@@ -31,7 +31,7 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 local available_lsp_servers = {
     clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--clang-tidy",]] }, },
     -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
-    pyright = {on_attach = on_attach, settings = {pyright = {autoImportCompletion = true,}, python = {analysis = {autoSearchPaths = true,diagnosticMode = 'openFilesOnly',useLibraryCodeForTypes = true,typeCheckingMode = 'on'}}}},
+    pyright = { on_attach = on_attach, settings = { pyright = { autoImportCompletion = true, }, python = { analysis = { autoSearchPaths = true, diagnosticMode = 'openFilesOnly', useLibraryCodeForTypes = true, typeCheckingMode = 'on' } } } },
     rust_analyzer = {},
     lua_ls = {},
     cmake = {},
@@ -71,7 +71,9 @@ later(function()   add({ source = 'folke/flash.nvim'}) end)
 ----------------------------------------------------------------------------------------------------
 later(function() require('nvim-treesitter.configs').setup({ -- Possible to immediately execute code which depends on the added plugin
         ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash' },
-        highlight = { enable = true },
+        highlight = {
+          disable = { "markdown", "markdown_inline" }, -- this one fixed the lagging/stuttering
+        },
     })
 end)
 
@@ -157,13 +159,21 @@ later(function()
             menu = { auto_show = true },
             documentation = { auto_show = true },
         },
-            -- Default list of enabled providers defined so that you can extend it
-    -- elsewhere in your config, without redefining it, due to `opts_extend`
-    sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
-    },
+
+        -- Default list of enabled providers defined so that you can extend it
+        -- elsewhere in your config, without redefining it, due to `opts_extend`
+        sources = {
+          default = { 'lsp', 'path', 'snippets', 'buffer' },
+        },
 
         signature = { enabled = true },
+        cmdline = {
+            completion = {
+                menu = {
+                    auto_show = true,
+                },
+            },
+        },
     })
 end) -- instead of mini.completion
 
