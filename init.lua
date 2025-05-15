@@ -62,6 +62,7 @@ later(function() add({ source = "mfussenegger/nvim-dap",
                                 'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]] } }) end)
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
 later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
+later(function()   add({ source = 'folke/flash.nvim'}) end)
 
 ---@format enable
 
@@ -140,9 +141,6 @@ later(function() require('mini.cursorword').setup() end) -- highlight word under
 later(function() require('mini.diff').setup() end)       -- Add hint about diff in git
 later(function() require('mini.git').setup() end)         -- Gestion de Git
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope
-local jump2d = require('mini.jump2d')
-local jump_line_start = jump2d.builtin_opts.word_start
-later(function() require('mini.jump2d').setup({ spotter = jump_line_start.spotter, labels = 'abcdefghijklmnopqrstuvwxyz', allowed_windows = { current = true, not_current = false, }, }) end)                                                     -- Permet les quickjump
 later(function() require('mini.move').setup() end)       -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
 later(function() require('mini.notify').setup() end)     -- Permet l'ajout de notification en haut à droite de l'écran
 later(function() require('mini.pairs').setup() end)      -- Feature pour la gestion des paires ({"etc."})
@@ -151,6 +149,7 @@ later(function() require('mini.surround').setup() end)   -- Fonctionalité pour 
 later(function() require('mini.tabline').setup() end)    -- gère les buffers dans des onglets "tabs"
 later(function() require('auto-save').setup({ event = { "insertLeave", }, --[[Several other value can set here: TextChanged]] }) end)
 later(function() require('hlpatterns').setup({ highlight_pattern_keymap = "<leader>hw", delete_all_highlight_keymap = "<leader>hd", highlight_selected_keymap = "<leader>hw", }) end)
+later(function() require('flash').setup() end)
 
 later(function()
     require('blink.cmp').setup({
@@ -362,10 +361,11 @@ later(function()
     -- WARN: This is not Goto Definition, this is Goto Declaration.
     --  For example, in C this would take you to the header.
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration' })
-end)
--- vim.keymap.set('vn', '<leader>j', require('mini.jump2d').start, {desc ='[J]ump'})
--- vim.keymap.set( {'n', 'v'}, '<leader>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.default)<CR>')
 
+    -- Show function hover
+    -- https://github.com/clangd/clangd/issues/529
+    vim.keymap.set('n', 'go', vim.lsp.buf.hover, { desc = '[G]et [H]over' })
+end)
 
 vim.keymap.set({ 'n' }, '<leader>mc', ':AsyncStop<CR> :AsyncRun make clean<CR> ', { desc = '[M]ake [C]lean' })
 vim.keymap.set({ 'n' }, '<leader>M', ':AsyncStop<CR> :AsyncRun make<CR> ', { desc = '[M]ake' })
@@ -373,14 +373,6 @@ vim.keymap.set({ 'n' }, '<leader>mb', ':AsyncStop<CR> :AsyncRun make build<CR> '
 vim.keymap.set({ 'n' }, '<leader>mr', ':AsyncStop<CR> :AsyncRun make run<CR> ', { desc = '[M]ake [R]un' })
 vim.keymap.set({ 'n' }, '<leader>ms', ':AsyncStop<CR>', { desc = '[M]ake [S]stop' })
 
-vim.keymap.set({ 'n', 'x' }, 'f', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>',
-    { desc = '[F]ind' })
-vim.keymap.set({ 'n', 'x' }, 'F', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>',
-    { desc = '[F]ind' })
-vim.keymap.set({ 'n', 'x' }, 't', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>',
-    { desc = '[F]ind' })
-vim.keymap.set({ 'n', 'x' }, 'T', '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>',
-    { desc = '[F]ind' })
 
 later(function()
     -- Option 3: treesitter as a main provider instead
@@ -444,3 +436,26 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.keymap.set({ 'n' }, '<leader>y', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
 
 vim.o.winborder = 'rounded'
+
+-- All the ways to start a search, with a description
+local mark_search_keys = {
+    ["/"] = "Search forward",
+    ["?"] = "Search backward",
+    ["*"] = "Search current word (forward)",
+    ["#"] = "Search current word (backward)",
+    ["£"] = "Search current word (backward)",
+    ["g*"] = "Search current word (forward, not whole word)",
+    ["g#"] = "Search current word (backward, not whole word)",
+    ["g£"] = "Search current word (backward, not whole word)",
+}
+
+-- Before starting the search, set a mark `s`
+for key, desc in pairs(mark_search_keys) do
+    vim.keymap.set("n", key, "ms" .. key, { desc = desc })
+end
+
+-- Clear search highlight when jumping back to beginning
+vim.keymap.set("n", "g/", function()
+    vim.cmd("normal! `s")
+    vim.cmd.nohlsearch()
+end)

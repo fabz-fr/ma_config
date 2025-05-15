@@ -191,6 +191,8 @@ nnoremap <space> <NOP>
 vnoremap <space> <NOP>
 nnoremap s <NOP>
 vnoremap s <NOP>
+vnoremap <CR> <NOP>
+nnoremap <CR> <NOP>
 
 " Set <space> as the leader key
 let mapleader = ' '
