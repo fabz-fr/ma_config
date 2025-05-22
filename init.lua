@@ -63,6 +63,7 @@ later(function() add({ source = "mfussenegger/nvim-dap",
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
 later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
 later(function()   add({ source = 'folke/flash.nvim'}) end)
+later(function()   add({ source = 'tpope/vim-fugitive'}) end)
 
 ---@format enable
 
@@ -141,7 +142,6 @@ later(function() require('mini.clue').setup({
 end)
 later(function() require('mini.cursorword').setup() end) -- highlight word under cursor
 later(function() require('mini.diff').setup() end)       -- Add hint about diff in git
-later(function() require('mini.git').setup() end)         -- Gestion de Git
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope
 later(function() require('mini.move').setup() end)       -- Ajout un mécanisme de mouvement avec ALT+hjkl pour bouger des blocs en visual mode
 later(function() require('mini.notify').setup() end)     -- Permet l'ajout de notification en haut à droite de l'écran
@@ -306,7 +306,7 @@ later(function()
     vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus search' })
 end)
 
-vim.keymap.set('n', 'gt', '<cmd>lua MiniDiff.toggle_overlay()<CR>', { desc = 'Toggle diff overlay' })
+vim.keymap.set('n', 'gt', '<cmd>Gvdiffsplit<CR>', { desc = 'Toggle diff overlay' })
 vim.keymap.set('n', '<A-o>', '<cmd>ClangdSwitchSourceHeader<CR>', { desc = 'Switch Source Header' })
 
 vim.keymap.set('n', 'yc', function() vim.api.nvim_feedkeys('yygccp', 'm', false) end)
