@@ -46,6 +46,9 @@ set breakindent
 " Save undo history
 set undofile
 
+" Stop using swap file
+set noswapfile
+
 " Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 set ignorecase
 set smartcase
@@ -270,3 +273,29 @@ augroup AutoReload
   autocmd!
   autocmd FocusGained,BufEnter,CursorHold * checktime
 augroup END
+
+command! DisplayHex call DisplayHexFunction()
+
+function! DisplayHexFunction()
+  " Sauvegarde la position du curseur et du fichier courant
+  let l:current_buf = bufnr('%')
+
+  " Récupère tout le contenu du buffer courant
+  let l:content = getline(1, '$')
+
+  " Ouvre un nouveau buffer sans nom
+  enew
+  ""buftype=nofile : indique que ce buffer ne correspond pas à un fichier.
+  ""bufhidden=hide : évite les avertissements quand on quitte sans sauvegarder.
+  ""noswapfile : évite la création de fichiers de swap pour ce buffer.
+  setlocal buftype=nofile
+  setlocal bufhidden=hide
+  setlocal noswapfile
+
+  " Met le contenu dans le nouveau buffer
+  call setline(1, l:content)
+
+  " Applique la commande xxd
+  %!xxd
+endfunction
+
