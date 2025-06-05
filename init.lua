@@ -61,6 +61,7 @@ later(function() add({ source = "mfussenegger/nvim-dap",
                                 'jay-babu/mason-nvim-dap.nvim',   --[[Installs the debug adapters for you]]
                                 'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]] } }) end)
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
+later(function() add({ source = 'nvim-treesitter/nvim-treesitter-context'}) end)
 later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
 later(function()   add({ source = 'folke/flash.nvim'}) end)
 later(function()   add({ source = 'tpope/vim-fugitive'}) end)
@@ -76,7 +77,8 @@ later(function() require('nvim-treesitter.configs').setup({ -- Possible to immed
           disable = { "markdown", "markdown_inline" }, -- this one fixed the lagging/stuttering
         },
     })
-end)
+    -- require('treesitter-context').setup()
+    end)
 
 ----------------------------------------------------------------------------------------------------
 -- Install Mason & LSP servers
@@ -198,6 +200,11 @@ later(function()
         ensure_installed = {
             -- Update this to ensure that you have the debuggers for the langs you want
             -- 'delve',
+            --
+            -- debug adapter for bash
+            -- nodejs is mandatory to use this adapter
+            'bash-debug-adapter',
+
         },
     }
 
@@ -243,7 +250,6 @@ later(function()
         command = '/usr/bin/lldb-vscode-14', -- adjust as needed, must be absolute path
         name = 'lldb'
     }
-
     dap.configurations.cpp =
     {
         {
@@ -290,6 +296,42 @@ later(function()
             stopOnEntry = false,
         }
     }
+
+    dap.adapters.bashdb = {
+      type = 'executable';
+      command = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/bash-debug-adapter';
+      name = 'bashdb';
+    }
+    dap.configurations.sh = {
+      {
+        type = 'bashdb',
+        request = 'launch',
+        name = "Launch file",
+        showDebugOutput = true,
+        pathBashdb = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir/bashdb',
+        pathBashdbLib = vim.fn.stdpath("data") .. '/mason/packages/bash-debug-adapter/extension/bashdb_dir',
+        trace = true,
+        file = "${file}",
+        -- program = "${file}",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.expand('%:p'), 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        pathCat = "cat",
+        pathBash = "/bin/bash",
+        pathMkfifo = "mkfifo",
+        pathPkill = "pkill",
+        -- args = {},
+        args = function() local input = vim.fn.input('list of args: ')
+            return vim.fn.split(input, " ", true)
+        end,
+
+        argsString = '',
+        env = {},
+        terminalKind = "integrated",
+      }
+    }
+
 end)
 
 later(function()
