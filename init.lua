@@ -419,12 +419,35 @@ later(function()
     vim.keymap.set('n', 'go', vim.lsp.buf.hover, { desc = '[G]et [H]over' })
 end)
 
-vim.keymap.set({ 'n' }, '<leader>mc', ':AsyncStop<CR> :AsyncRun make clean<CR> ', { desc = '[M]ake [C]lean' })
-vim.keymap.set({ 'n' }, '<leader>M', ':AsyncStop<CR> :AsyncRun make<CR> ', { desc = '[M]ake' })
-vim.keymap.set({ 'n' }, '<leader>mb', ':AsyncStop<CR> :AsyncRun make build<CR> ', { desc = '[M]ake [B]uild' })
-vim.keymap.set({ 'n' }, '<leader>mr', ':AsyncStop<CR> :AsyncRun make run<CR> ', { desc = '[M]ake [R]un' })
-vim.keymap.set({ 'n' }, '<leader>ms', ':AsyncStop<CR>', { desc = '[M]ake [S]stop' })
+vim.api.nvim_create_user_command("MaCommandeFzf", function()
+    local output = vim.fn.systemlist("make help")
 
+    if vim.v.shell_error ~= 0 then
+        print("Error: Command 'make help' failed. Check your current directory.")
+        return
+    end
+
+    require("fzf-lua").fzf_exec(output, {
+        prompt = "make help> ",
+        actions = {
+            ["default"] = function(selected)
+                local line = selected[1]
+                local target = line:match("%- ([%w_-]+):")
+
+                if target then
+                    local cmd = "make " .. target
+                    vim.cmd("AsyncRun " .. cmd)
+                    vim.cmd("copen")
+                    vim.cmd("wincmd p")
+                else
+                    print("Error: Can't extract a target from line : " .. line)
+                end
+            end
+        },
+    })
+end, {})
+
+vim.keymap.set({ 'n'}, '<leader>M', "<cmd>MaCommandeFzf<cr>",  { desc = '[M]ake' })
 
 later(function()
     -- Option 3: treesitter as a main provider instead
