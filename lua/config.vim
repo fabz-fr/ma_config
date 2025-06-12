@@ -267,6 +267,9 @@ else
 endif
 
 
+" --------------------------------------------------------------------------------------------
+" Display buffer as hexadecimal
+" --------------------------------------------------------------------------------------------
 " Automatically refresh file when externally modified 
 set autoread
 augroup AutoReload
@@ -298,4 +301,30 @@ function! DisplayHexFunction()
   " Applique la commande xxd
   %!xxd
 endfunction
+
+"" --------------------------------------------------------------------------------------------
+"" Execute the line where cursor is
+"" --------------------------------------------------------------------------------------------
+function! BangLines() range
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+
+    "let rez = join(lines, "\n")
+    "echom "rez"
+    "echom lines
+    for i in lines
+        execute "!".i
+    endfor
+endfunction
+
+nnoremap <leader>e V"ey:!<C-R>e<CR>
+vnoremap <leader>e :<C-u>call BangLines()<CR>
+
 
