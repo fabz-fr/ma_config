@@ -254,9 +254,6 @@ else
     " --------------------------------------------------------------------------------------------
     "set runtimepath+=~/.fzf
     source ~/.fzf/plugin/fzf.vim
-    " Map search file with fuzzy finder
-    nmap <leader>sf :FZF<cr>
-    echo "no plugin configuration"
 
     command! -nargs=* Rg call fzf#run({
                 \ 'source': 'rg --column --line-number --no-heading --smart-case -- ' . shellescape(<q-args>),
@@ -264,6 +261,11 @@ else
                 \ 'down': '40%',
                 \ 'options': '--multi --delimiter ":" --preview "cat {1}"'
                 \ })
+    "
+    " Map search file with fuzzy finder
+    nmap <leader>sf :FZF<cr>
+    nmap <leader>sg :Rg<cr>
+    echo "no plugin configuration"
 endif
 
 " Automatically refresh file when externally modified 
