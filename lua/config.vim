@@ -163,27 +163,20 @@ augroup END
 " Automatically save before commands like :next or :make
 set autowrite
 
-" Set status line display
-"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ [BUFFER=%n]\ %{strftime('%c')}
-
-" STATUS LINE ------------------------------------------------------------ {{{
-
+" --------------------------------------------------------------------------------------------
+" STATUS LINE 
+" --------------------------------------------------------------------------------------------
 " Clear status line when vimrc is reloaded.
 set statusline=
-
 " Status line left side.
 set statusline+=\ %F\ %M\ %Y\ %R
-
 " Use a divider to separate the left side from the right side.
 set statusline+=%=
-
 " Status line right side.
 set statusline+=\ ascii:\ %b\ hex:\ 0x%B\ row:\ %l\ col:\ %c\ percent:\ %p%%
-
 " Show the status on the second to last line.
 set laststatus=2
 
-" }}}
 
 " --------------------------------------------------------------------------------------------
 " KEYBINDINGS / SHORTCUTS CONFIGURATION
@@ -264,12 +257,15 @@ else
     " Map search file with fuzzy finder
     nmap <leader>sf :FZF<cr>
     echo "no plugin configuration"
+
+    command! -nargs=* Rg call fzf#run({
+                \ 'source': 'rg --column --line-number --no-heading --smart-case -- ' . shellescape(<q-args>),
+                \ 'sink': { res -> execute('cexpr ' . string(res)) },
+                \ 'down': '40%',
+                \ 'options': '--multi --delimiter ":" --preview "cat {1}"'
+                \ })
 endif
 
-
-" --------------------------------------------------------------------------------------------
-" Display buffer as hexadecimal
-" --------------------------------------------------------------------------------------------
 " Automatically refresh file when externally modified 
 set autoread
 augroup AutoReload
@@ -277,8 +273,10 @@ augroup AutoReload
   autocmd FocusGained,BufEnter,CursorHold * checktime
 augroup END
 
+" --------------------------------------------------------------------------------------------
+" Display buffer as hexadecimal
+" --------------------------------------------------------------------------------------------
 command! DisplayHex call DisplayHexFunction()
-
 function! DisplayHexFunction()
   " Sauvegarde la position du curseur et du fichier courant
   let l:current_buf = bufnr('%')
@@ -294,10 +292,8 @@ function! DisplayHexFunction()
   setlocal buftype=nofile
   setlocal bufhidden=hide
   setlocal noswapfile
-
   " Met le contenu dans le nouveau buffer
   call setline(1, l:content)
-
   " Applique la commande xxd
   %!xxd
 endfunction
@@ -316,9 +312,6 @@ function! BangLines() range
     let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
     let lines[0] = lines[0][column_start - 1:]
 
-    "let rez = join(lines, "\n")
-    "echom "rez"
-    "echom lines
     for i in lines
         execute "!".i
     endfor
@@ -326,5 +319,4 @@ endfunction
 nnoremap <leader>e V"ey:!<C-R>e<CR>
 vnoremap <leader>e :<C-u>call BangLines()<CR>
 "vnoremap <leader>e :'<,'>w !sh<CR> is a shorter version but uses ex command
-
 
