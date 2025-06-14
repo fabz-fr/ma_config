@@ -323,8 +323,8 @@ function! BangLines() range
         execute "!".i
     endfor
 endfunction
-
 nnoremap <leader>e V"ey:!<C-R>e<CR>
 vnoremap <leader>e :<C-u>call BangLines()<CR>
+"vnoremap <leader>e :'<,'>w !sh<CR> is a shorter version but uses ex command
 
 
