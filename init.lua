@@ -153,7 +153,53 @@ later(function() require('mini.surround').setup() end)   -- Fonctionalité pour 
 later(function() require('mini.tabline').setup() end)    -- gère les buffers dans des onglets "tabs"
 later(function() require('auto-save').setup({ event = { "insertLeave", }, --[[Several other value can set here: TextChanged]] }) end)
 later(function() require('hlpatterns').setup({ highlight_pattern_keymap = "<leader>hw", delete_all_highlight_keymap = "<leader>hd", highlight_selected_keymap = "<leader>hw", }) end)
-later(function() require('flash').setup() end)
+later(function() require('flash').setup() 
+
+-- Définit une fonction personnalisée que tu peux appeler depuis un mapping
+ function flash_jump()
+     local Flash = require("flash")
+  ---@param opts Flash.Format
+  local function format(opts)
+    return {
+      { opts.match.label1, "FlashMatch" },
+      { opts.match.label2, "FlashLabel" },
+    }
+  end
+
+  Flash.jump({
+    search = { mode = "search" },
+    label = { after = false, before = { 0, 0 }, uppercase = false, format = format },
+    pattern = [[\<]],
+    action = function(match, state)
+      state:hide()
+      Flash.jump({
+        search = { max_length = 0 },
+        highlight = { matches = false },
+        label = { format = format },
+        matcher = function(win)
+          return vim.tbl_filter(function(m)
+            return m.label == match.label and m.win == win
+          end, state.results)
+        end,
+        labeler = function(matches)
+          for _, m in ipairs(matches) do
+            m.label = m.label2
+          end
+        end,
+      })
+    end,
+    labeler = function(matches, state)
+      local labels = state:labels()
+      for m, match in ipairs(matches) do
+        match.label1 = labels[math.floor((m - 1) / #labels) + 1]
+        match.label2 = labels[(m - 1) % #labels + 1]
+        match.label = match.label1
+      end
+    end,
+  })
+end
+
+end)
 
 later(function()
     require('blink.cmp').setup({
@@ -540,3 +586,5 @@ vim.keymap.set({ 'n', "x", "o" }, '<leader>zS', function() require("flash").tree
 vim.keymap.set({ 'o' },           '<leader>zr', function() require("flash").remote() end,            { desc = "Remote Flash" })
 vim.keymap.set({ 'o', "x" },      '<leader>zR', function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set({ 'c' },           '<c-s>',      function() require("flash").toggle() end,            { desc = "Toggle Flash Search" })
+
+vim.keymap.set({ 'n' },           '<CR>',    function() flash_jump() end ,            { desc = "Toggle Flash Search" })
