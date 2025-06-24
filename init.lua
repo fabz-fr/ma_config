@@ -587,4 +587,4 @@ vim.keymap.set({ 'o' },           '<leader>zr', function() require("flash").remo
 vim.keymap.set({ 'o', "x" },      '<leader>zR', function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set({ 'c' },           '<c-s>',      function() require("flash").toggle() end,            { desc = "Toggle Flash Search" })
 
-vim.keymap.set({ 'n' },           '<CR>',    function() flash_jump() end ,            { desc = "Toggle Flash Search" })
+vim.keymap.set({ 'n', 'v' },           '<CR>',    function() flash_jump() end ,            { desc = "Toggle Flash Search" })
