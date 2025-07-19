@@ -5,6 +5,8 @@ vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 vim.cmd('source ~/.config/nvim/lua/highlight.lua')
 
+-- Remove blinking cursor in neovim
+vim.opt.guicursor:remove { 't:block-blinkon500-blinkoff500-TermCursor' }
 ----------------------------------------------------------------------------------------------------
 -- Clone 'mini.nvim' manually in a way that it gets managed by 'mini.deps'
 ----------------------------------------------------------------------------------------------------
@@ -517,7 +519,7 @@ vim.keymap.set({ 'n' }, '<leader>gcb', '0v/|||<CR>$x/====<CR>0v/>>><CR>$x', { de
 vim.keymap.set({ 'n' }, '<leader>gcs', '0v/====<CR>$x/>>><CR>dd', { desc = '[G]it [C]onflict Choose [S]tashed' })
 
 vim.keymap.set({ 'n' }, '<leader>ti', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for Inlay hints") else vim.lsp .inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end end, { desc = '[T]oggle [I]nlay hints' })
-vim.keymap.set({ 'n' }, '<leader>=', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf .format() end end, { desc = 'Format code' })
+vim.keymap.set({ 'n' }, '<leader>=', function() if next(vim.lsp.get_active_clients()) == nil then print("No client for formatting code") else vim.lsp.buf.format() end end, { desc = 'Format code' })
 
 vim.diagnostic.config({
     -- virtual_text = { prefix = "", format = diagnostic_format, },
