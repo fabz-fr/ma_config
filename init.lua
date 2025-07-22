@@ -158,7 +158,7 @@ later(function() require('hlpatterns').setup({ highlight_pattern_keymap = "<lead
 later(function() require('flash').setup() 
 
 -- Définit une fonction personnalisée que tu peux appeler depuis un mapping
- function flash_jump()
+ function flash_jump(word_begin)
      local Flash = require("flash")
   ---@param opts Flash.Format
   local function format(opts)
@@ -168,10 +168,16 @@ later(function() require('flash').setup()
     }
   end
 
+  if word_begin then
+      pattern_value = [[\<]]
+  else 
+      pattern_value = [[\w\>]]
+  end
+
   Flash.jump({
     search = { mode = "search" },
     label = { after = false, before = { 0, 0 }, uppercase = false, format = format },
-    pattern = [[\<]],
+    pattern = pattern_value,
     action = function(match, state)
       state:hide()
       Flash.jump({
@@ -202,6 +208,7 @@ later(function() require('flash').setup()
 end
 
 end)
+
 
 later(function()
     require('blink.cmp').setup({
@@ -589,4 +596,6 @@ vim.keymap.set({ 'o' },           '<leader>zr', function() require("flash").remo
 vim.keymap.set({ 'o', "x" },      '<leader>zR', function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set({ 'c' },           '<c-s>',      function() require("flash").toggle() end,            { desc = "Toggle Flash Search" })
 
-vim.keymap.set({ 'n', 'v' },           '<CR>',    function() flash_jump() end ,            { desc = "Toggle Flash Search" })
+vim.keymap.set({ 'n', 'v' },           '<CR>',      function() flash_jump(true) end ,            { desc = "Toggle Flash Search" })
+vim.keymap.set({ 'n', 'v' },           '<S-CR>',    function() flash_jump(false) end,            { desc = "Toggle Flash Search" })
+
