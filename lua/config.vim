@@ -324,3 +324,75 @@ nnoremap <leader>e V"ey:!<C-R>e<CR>
 vnoremap <leader>e :<C-u>call BangLines()<CR>
 "vnoremap <leader>e :'<,'>w !sh<CR> is a shorter version but uses ex command
 
+"" --------------------------------------------------------------------------------------------
+"" Add a jump function if config is no plugins
+"" --------------------------------------------------------------------------------------------
+if ! exists('g:init_lua_loaded')
+    "highlight WordLabelHighlight guifg=#fffff0 guibg=#ffff00
+    highlight WordLabelHighlight guifg=#ffffff guibg=#623417
+
+    function! LabelWordsWithLetters()
+        let ns_id = nvim_create_namespace('word_labels_alpha')
+        let bufnr = bufnr('%')
+        call nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
+
+        let first = line('w0')
+        let last  = line('w$')
+        let lines = nvim_buf_get_lines(bufnr, first-1, last, v:false)
+
+        let idx = 0
+        for i in range(len(lines))
+            let l = lines[i]
+            let start = 0
+            while 1
+                let m = matchstrpos(l, '\w\+', start)
+                if m[1] == -1 | break | endif
+                if idx >= 26*26 | return | endif
+
+                let lbl = nr2char(char2nr('a')+idx/26) . nr2char(char2nr('a')+idx%26)
+                call nvim_buf_set_extmark(bufnr, ns_id, first+i-1, m[1], {
+                            \ 'virt_text': [[lbl, 'WordLabelHighlight']],
+                            \ 'virt_text_pos': 'overlay'
+                            \ })
+                let idx += 1
+                let start = m[2]
+            endwhile
+        endfor
+    endfunction
+
+    function! ClearWordLabels()
+        let ns_id = nvim_create_namespace('word_labels_alpha')
+        call nvim_buf_clear_namespace(bufnr('%'), ns_id, 0, -1)
+        echo "Labels deleted"
+    endfunction
+
+    function! GoToLabel()
+        call LabelWordsWithLetters()
+        redraw
+        let lbl = input('Go to label :')
+        if lbl ==# ''
+            call ClearWordLabels()
+            return
+        endif
+
+        let ns = nvim_create_namespace('word_labels_alpha')
+        let marks = nvim_buf_get_extmarks(bufnr('%'), ns, 0, -1, {'details': v:true})
+
+        for m in marks
+            if has_key(m[3], 'virt_text') && m[3].virt_text[0][0] ==# lbl
+                call nvim_win_set_cursor(0, [m[1]+1, m[2]])
+                break
+            endif
+        endfor
+
+        call ClearWordLabels()
+    endfunction
+
+    command! LabelWordsWithLetters call LabelWordsWithLetters()
+    command! ClearWordLabels call ClearWordLabels()
+    command! GoToLabel call GoToLabel()
+
+    nmap <CR> :GoToLabel<CR>
+    vmap <CR> :GoToLabel<CR>
+endif
+
