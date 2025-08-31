@@ -31,7 +31,7 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 -- Define LSP servers
 ----------------------------------------------------------------------------------------------------
 local available_lsp_servers = {
-    clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--clang-tidy",]] }, },
+    clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--offset-encoding=utf-16",]] --[["--clang-tidy",]] }, },
     rust_analyzer = {},
     lua_ls = {},
     cmake = {},
@@ -39,7 +39,7 @@ local available_lsp_servers = {
 
     -- tools for python
     -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
-    pyright = { on_attach = on_attach, settings = { pyright = { autoImportCompletion = true, }, python = { analysis = { autoSearchPaths = true, diagnosticMode = 'openFilesOnly', useLibraryCodeForTypes = true, typeCheckingMode = 'on' } } } },
+    basedpyright = { on_attach = on_attach, settings = { pyright = { autoImportCompletion = true, }, python = {  } } }, -- diagnosticMode = 'openFilesOnly', 
     ruff = {},
     -- 'black', // Pas nécessaire car ruff embarque aussi un formatter 
     -- 'mypy', // N'est pas un LSP et ne peut pas fonctionner avec lspconfig directement.
