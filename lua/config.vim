@@ -104,8 +104,14 @@ set cursorcolumn
 set colorcolumn=100
 
 " Don't wrap lines, Allow long lines to extend as far as the line goes. But allow breaking at word boundaries
-set nowrap
+"set nowrap
+" Wrap lines by default 
+set wrap
+" When break occurs, if possible, the word is kept full at next line
 set linebreak
+" Don't jump over wrapped lines parts
+nnoremap j gj
+nnoremap k gk
 
 " Automatically reload file when externally updated
 set autoread
