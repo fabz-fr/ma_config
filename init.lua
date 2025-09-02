@@ -4,6 +4,7 @@
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 vim.cmd('source ~/.config/nvim/lua/highlight.lua')
+vim.cmd('source ~/.config/nvim/lua/calltree.lua')
 
 -- Remove blinking cursor in neovim
 vim.opt.guicursor:remove { 't:block-blinkon500-blinkoff500-TermCursor' }
