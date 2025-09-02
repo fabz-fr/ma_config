@@ -100,14 +100,16 @@ now(function()
     })
 end)
 
-now(function()
-    -- Importer lspconfig
-    local lspconfig = require('lspconfig')
-    -- Boucle sur chaque serveur dans le tableau et l'initialise
-    for server, config in pairs(available_lsp_servers) do
-        lspconfig[server].setup(config)
-    end
-end)
+-- Mis en commentaire. En effet, nvim-lspconfig et mason-lspconfig ont l'air de faire la même chose.
+-- En configurant les deux, cela créé plusieurs instance de serveur LSP clangd
+-- now(function()
+--     -- Importer lspconfig
+--     local lspconfig = require('lspconfig')
+--     -- Boucle sur chaque serveur dans le tableau et l'initialise
+--     for server, config in pairs(available_lsp_servers) do
+--         lspconfig[server].setup(config)
+--     end
+-- end)
 
 ----------------------------------------------------------------------------------------------------
 -- Install colorscheme
