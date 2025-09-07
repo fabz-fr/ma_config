@@ -400,5 +400,37 @@ if ! exists('g:init_lua_loaded')
 
     nmap <CR> :GoToLabel<CR>
     vmap <CR> :GoToLabel<CR>
+
 endif
 
+"" --------------------------------------------------------------------------------------------
+"" If we are in a git repository, update findfunc() otherwise, set path to **
+"" --------------------------------------------------------------------------------------------
+if !isdirectory('.git')
+    set path=**
+else
+    " Use the 'git ls-files' output
+    func FindGitFiles(cmdarg, cmdcomplete)
+    let main_files = systemlist('git ls-files -oc --deduplicate --exclude-standard')
+    let sub_files = systemlist('git submodule foreach --quiet "git ls-files -oc --deduplicate --exclude-standard"')
+    let all_files = uniq(sort(main_files + sub_files))
+    return all_files->filter('v:val =~? a:cmdarg')
+    endfunc
+    set findfunc=FindGitFiles
+
+    " Add a rg for :grep command
+    set grepprg=rg\ --vimgrep
+    set grepformat^=%f:%l:%c:%m
+
+endif
+
+"" using <c-v> transform :find to :vs
+cmap <c-v> <home><s-right><c-w>vs<end>
+cmap <c-s> <home><s-right><c-w>sp<end>
+cmap <c-t> <home><s-right><c-w>tabe<end>
+
+" bugfix, <CR> mapping above, remove <CR> in quickfix list. It must be forced 
+augroup QuickFixMappings
+  autocmd!
+  autocmd FileType qf nnoremap <buffer> <CR> <CR>
+augroup END
