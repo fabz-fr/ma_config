@@ -286,8 +286,8 @@ augroup END
 " --------------------------------------------------------------------------------------------
 " Display buffer as hexadecimal
 " --------------------------------------------------------------------------------------------
-command! DisplayHex call DisplayHexFunction()
-function! DisplayHexFunction()
+command! Fdisplayhex call Fdisplayhexfunction()
+function! Fdisplayhexfunction()
   " Sauvegarde la position du curseur et du fichier courant
   let l:current_buf = bufnr('%')
 
@@ -311,7 +311,8 @@ endfunction
 "" --------------------------------------------------------------------------------------------
 "" Execute the line where cursor is
 "" --------------------------------------------------------------------------------------------
-function! BangLines() range
+"command! -range Banglines <line1>,<line2>call Fbanglines()
+function! Fbanglines() range
     " Why is this not a built-in Vim script function?!
     let [line_start, column_start] = getpos("'<")[1:2]
     let [line_end, column_end] = getpos("'>")[1:2]
@@ -327,7 +328,7 @@ function! BangLines() range
     endfor
 endfunction
 nnoremap <leader>e V"ey:!<C-R>e<CR>
-vnoremap <leader>e :<C-u>call BangLines()<CR>
+vnoremap <leader>e :<C-u>call Fbanglines()<CR>
 "vnoremap <leader>e :'<,'>w !sh<CR> is a shorter version but uses ex command
 
 "" --------------------------------------------------------------------------------------------
