@@ -67,7 +67,8 @@ later(function() add({ source = "mfussenegger/nvim-dap",
                                 'nvim-neotest/nvim-nio',          --[[Required dependency for nvim-dap-ui]]
                                 'williamboman/mason.nvim',        --[[Installs the debug adapters for you]]
                                 'jay-babu/mason-nvim-dap.nvim',   --[[Installs the debug adapters for you]]
-                                'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]] } }) end)
+                                'theHamsta/nvim-dap-virtual-text',--[[Install plugins that allows variables values inside editor]]
+                                'jbyuki/one-small-step-for-vimkind', } }) end)
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
 later(function() add({ source = 'nvim-treesitter/nvim-treesitter-context'}) end)
 later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
@@ -305,6 +306,10 @@ later(function()
     vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug toggle breakpoint' })
     vim.keymap.set('n', '<leader>B', function() dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ') end,
         { desc = 'Debug toggle breakpoint' })
+    vim.keymap.set('n', '<F3>', function() 
+        require"osv".launch({port = 8086}) 
+    end, { noremap = true })
+
     -- vim.keymap.set('n', '<leader>?', function() dapui.eval(nil, {enter = true}) end, { desc = 'show variable' })
 
     dap.adapters.lldb = {
@@ -393,6 +398,18 @@ later(function()
         terminalKind = "integrated",
       }
     }
+
+    dap.configurations.lua = { 
+        { 
+            type = 'nlua', 
+            request = 'attach',
+            name = "Attach to running Neovim instance",
+        }
+    }
+
+    dap.adapters.nlua = function(callback, config)
+        callback({ type = 'server', host = config.host or "127.0.0.1", port = config.port or 8086 })
+    end
 
 end)
 
