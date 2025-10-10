@@ -4,7 +4,6 @@
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 vim.cmd('source ~/.config/nvim/lua/highlight.lua')
-vim.cmd('source ~/.config/nvim/lua/calltree.lua')
 
 -- Remove blinking cursor in neovim
 vim.opt.guicursor:remove { 't:block-blinkon500-blinkoff500-TermCursor' }
@@ -131,7 +130,7 @@ end)
 ----------------------------------------------------------------------------------------------------
 later(function()
     require('fzf-lua').setup({
-        winopts = { height = 1, width = 1, },
+        winopts = { height = 0.99, width = 0.99, },
         keymap  = { fzf = { ["ctrl-q"] = "select-all+accept", }, },
     })
 end)
@@ -428,7 +427,7 @@ later(function()
 end)
 
 vim.keymap.set('n', 'gt', '<cmd>Gvdiffsplit<CR>', { desc = 'Toggle diff overlay' })
-vim.keymap.set('n', '<A-o>', '<cmd>ClangdSwitchSourceHeader<CR>', { desc = 'Switch Source Header' })
+vim.keymap.set('n', '<A-o>', '<cmd>LspClangdSwitchSourceHeader<CR>', { desc = 'Switch Source Header' })
 
 vim.keymap.set('n', 'yc', function() vim.api.nvim_feedkeys('yygccp', 'm', false) end)
 
