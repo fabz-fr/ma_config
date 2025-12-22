@@ -71,6 +71,7 @@ later(function() add({ source = "mfussenegger/nvim-dap",
 now(function()   add({ source = 'nvim-treesitter/nvim-treesitter', --[[Use 'master' while monitoring updates in 'main']] checkout = 'master', monitor = 'main', --[[Perform action after every checkout]] hooks = { post_checkout = function() vim.cmd('TSUpdate') end }, }) end)
 later(function() add({ source = 'nvim-treesitter/nvim-treesitter-context'}) end)
 later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
+later(function()   add({ source = 'fabz-fr/call_hierarchy.nvim'}) end)
 later(function()   add({ source = 'folke/flash.nvim'}) end)
 later(function()   add({ source = 'tpope/vim-fugitive'}) end)
 
@@ -80,7 +81,7 @@ later(function()   add({ source = 'tpope/vim-fugitive'}) end)
 -- Install TreeSitter
 ----------------------------------------------------------------------------------------------------
 later(function() require('nvim-treesitter.configs').setup({ -- Possible to immediately execute code which depends on the added plugin
-        ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash' },
+        ensure_installed = { 'lua', 'vimdoc', 'rust', 'c', 'cpp', 'cmake', 'python', 'vim', 'bash', 'bitbake'},
         highlight = {
           disable = { "markdown", "markdown_inline" }, -- this one fixed the lagging/stuttering
         },
@@ -163,6 +164,7 @@ later(function() require('mini.surround').setup() end)   -- Fonctionalité pour 
 later(function() require('mini.tabline').setup() end)    -- gère les buffers dans des onglets "tabs"
 later(function() require('auto-save').setup({ event = { "insertLeave", }, --[[Several other value can set here: TextChanged]] }) end)
 later(function() require('hlpatterns').setup({ highlight_pattern_keymap = "<leader>hw", delete_all_highlight_keymap = "<leader>hd", highlight_selected_keymap = "<leader>hw", }) end)
+later(function() require('call_hierarchy').setup() end)
 later(function() require('flash').setup() 
 
 -- Définit une fonction personnalisée que tu peux appeler depuis un mapping
@@ -527,6 +529,37 @@ end, {})
 
 vim.keymap.set({ 'n'}, '<leader>M', "<cmd>MaCommandeFzf<cr>",  { desc = '[M]ake' })
 
+vim.api.nvim_create_user_command("MaCommandeFzf", function()
+    local output = vim.fn.systemlist("./task.sh help")
+
+    if vim.v.shell_error ~= 0 then
+        print("Error: Command 'make help' failed. Check your current directory.")
+        return
+    end
+
+    require("fzf-lua").fzf_exec(output, {
+        prompt = "./task.sh help> ",
+        actions = {
+            ["default"] = function(selected)
+                local line = selected[1]
+                local target = line:match("([%w_-]+)")
+
+                if target then
+                    local cmd = "./task.sh " .. target
+                    vim.cmd("AsyncRun " .. cmd)
+                    vim.cmd("copen")
+                    vim.cmd("wincmd p")
+                else
+                    print("Error: Can't extract a target from line : " .. line)
+                end
+            end
+        },
+    })
+end, {})
+
+vim.keymap.set({ 'n'}, '<leader>T', "<cmd>MaCommandeFzf<cr>",  { desc = '[T]ask.sh' })
+
+
 later(function()
     -- Option 3: treesitter as a main provider instead
     -- (Note: the `nvim-treesitter` plugin is *not* needed.)
@@ -617,8 +650,9 @@ vim.keymap.set({ 'n', "x", "o" }, '<leader>zs', function() require("flash").jump
 vim.keymap.set({ 'n', "x", "o" }, '<leader>zS', function() require("flash").treesitter() end,        { desc = "Flash Treesitter"})
 vim.keymap.set({ 'o' },           '<leader>zr', function() require("flash").remote() end,            { desc = "Remote Flash" })
 vim.keymap.set({ 'o', "x" },      '<leader>zR', function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
-vim.keymap.set({ 'c' },           '<c-s>',      function() require("flash").toggle() end,            { desc = "Toggle Flash Search" })
 
 vim.keymap.set({ 'n', 'v' },           '<CR>',      function() flash_jump(true) end ,            { desc = "Toggle Flash Search" })
 vim.keymap.set({ 'n', 'v' },           '<S-CR>',    function() flash_jump(false) end,            { desc = "Toggle Flash Search" })
+
+vim.keymap.set('n', '<leader>to', function() vim.opt.scrolloff = 999 - vim.o.scrolloff end)
 
