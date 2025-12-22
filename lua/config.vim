@@ -426,7 +426,7 @@ else
 endif
 
 "" using <c-v> transform :find to :vs
-cmap <c-v> <home><s-right><c-w>vs<end>
+cmap <c-S> <home><s-right><c-w>vs<end>
 cmap <c-s> <home><s-right><c-w>sp<end>
 cmap <c-t> <home><s-right><c-w>tabe<end>
 
