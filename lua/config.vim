@@ -256,7 +256,9 @@ tnoremap <expr> <Esc> (&filetype == "fzf") ? "<Esc>" : "<c-\><c-n>"
 " Check if the primary init.lua file was loaded
 if exists('g:init_lua_loaded')
     echo "plugins configuration"
+
 else
+    vnoremap y "+y
     " --------------------------------------------------------------------------------------------
     " FZF Fuzzy Finder configuration
     " --------------------------------------------------------------------------------------------
