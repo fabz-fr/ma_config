@@ -4,6 +4,7 @@
 vim.g.init_lua_loaded = true
 vim.cmd('source ~/.config/nvim/lua/config.vim')
 vim.cmd('source ~/.config/nvim/lua/highlight.lua')
+-- vim.cmd('source ~/.config/nvim/lua/treesit_navigator.lua')
 
 -- Remove blinking cursor in neovim
 vim.opt.guicursor:remove { 't:block-blinkon500-blinkoff500-TermCursor' }
@@ -41,6 +42,7 @@ local available_lsp_servers = {
     -- To use pyright, node must be installed from nvm. Install nvm (go to github page) then install node, then symlink node to /usr/bin/node
     basedpyright = { on_attach = on_attach, settings = { pyright = { autoImportCompletion = true, }, python = {  } } }, -- diagnosticMode = 'openFilesOnly', 
     ruff = {},
+    ty = {},
     -- 'black', // Pas nécessaire car ruff embarque aussi un formatter 
     -- 'mypy', // N'est pas un LSP et ne peut pas fonctionner avec lspconfig directement.
 }
@@ -532,8 +534,12 @@ vim.keymap.set({ 'n'}, '<leader>M', "<cmd>MaCommandeFzf<cr>",  { desc = '[M]ake'
 vim.api.nvim_create_user_command("MaCommandeFzf", function()
     local output = vim.fn.systemlist("./task.sh help")
 
+    if #output > 0 then
+        table.remove(output, 1)
+    end
+
     if vim.v.shell_error ~= 0 then
-        print("Error: Command 'make help' failed. Check your current directory.")
+        print("Error: Command './task.sh help' failed. Check your current directory.")
         return
     end
 
@@ -606,7 +612,7 @@ function toggle_diagnostics()
     vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end
 
-toggle_diagnostics()
+-- toggle_diagnostics()
 
 vim.keymap.set("n", "<leader>td", "<cmd>lua toggle_diagnostics()<cr>", { desc = "Toggle diagnostics" })
 
