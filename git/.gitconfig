@@ -1,0 +1,22 @@
+[user]
+	email = f.guibreteau@gmail.com
+	name = Heryz1
+[diff]
+    tool = nvimdiff
+[difftool]
+    prompt = yes
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[merge]
+    tool = nvimdiff
+[mergetool]
+    prompt = true
+# [mergetool "nvimdiff"]
+    #; cmd = nvim -d \"$LOCAL\",\"$BASE\",\"$REMOTE\"/\"$MERGED\"
+#   cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+#[mergetool "nvimdiff"]
+    #cmd = (LOCAL,BASE,REMOTE)/MERGED
+[mergetool "nvimdiff"]
+	layout = (LOCAL,BASE,REMOTE)/MERGED
+[credential]
+	helper = cache

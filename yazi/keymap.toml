@@ -1,0 +1,15 @@
+prepend-keymap = [
+	{ on = "<c-y>", run = "close --submit", desc = "close" },
+]
+
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "unix"
+run  = 'shell "$SHELL" --block'
+desc = "Open $SHELL here"
+
+[[mgr.prepend_keymap]]
+on  = [ "F", "G" ]
+run = "plugin yafg"
+
+
