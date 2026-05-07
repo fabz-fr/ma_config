@@ -1,22 +1,43 @@
 [user]
-	email = f.guibreteau@gmail.com
-	name = Heryz1
+    name = Fabien GUIBRETEAU
+    email = f.guibreteau@gmail.com
+
 [diff]
     tool = nvimdiff
-[difftool]
-    prompt = yes
 [difftool "nvimdiff"]
-    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+    # cmd = "nvim --clean -d \"$LOCAL\" \"$REMOTE\" -c 'wincmd l'"
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" -c 'wincmd l'"
+[core]
+    pager = less -F -X
+[alias]
+    s = status
+    b = "! git branch --format \"%(refname:short)\" -al"
+    sba = show-branch -a
+    #upstream = "! git rev-parse --abbrev-ref HEAD@{upstream} " # Does not work sometimes 
+    upstream = "! echo origin/$(git rev-parse --abbrev-ref HEAD) "
+    sb = "! git show-branch $(git rev-parse --abbrev-ref HEAD) $(git show-ref --quiet $(git upstream) && echo $(git upstream) || true) $(git show-ref --quiet origin/dev && echo origin/dev || true) $(git show-ref --quiet origin/master && echo origin/master || true) "
+    a = add
+    wt = worktree
+    wtl = worktree list
+    lg1 = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+    lg2 = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg3 = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+    lg = log -all --graph --date=relative --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ad)%Creset'
+    d = diff
+    ds = "diff --staged . "
+    ri = "!f() { : \"${1:?usage: git ri <base>}\"; git rebase -i $(git merge-base HEAD \"$1\"); }; f"
+
+[pager]
+    show-branch = true
+
+[color]
+    ui = auto
+
 [merge]
     tool = nvimdiff
 [mergetool]
     prompt = true
-# [mergetool "nvimdiff"]
-    #; cmd = nvim -d \"$LOCAL\",\"$BASE\",\"$REMOTE\"/\"$MERGED\"
-#   cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
-#[mergetool "nvimdiff"]
-    #cmd = (LOCAL,BASE,REMOTE)/MERGED
 [mergetool "nvimdiff"]
-	layout = (LOCAL,BASE,REMOTE)/MERGED
+    layout = (LOCAL,BASE,REMOTE)/MERGED
 [credential]
-	helper = cache
+    helper = store
