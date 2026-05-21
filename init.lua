@@ -11,17 +11,17 @@ vim.opt.guicursor:remove { 't:block-blinkon500-blinkoff500-TermCursor' }
 ----------------------------------------------------------------------------------------------------
 -- Clone 'mini.nvim' manually in a way that it gets managed by 'mini.deps'
 ----------------------------------------------------------------------------------------------------
-local path_package = vim.fn.stdpath('data') .. '/site/'
-local mini_path = path_package .. 'pack/deps/start/mini.nvim'
-if not vim.loop.fs_stat(mini_path) then
-    vim.cmd('echo "Installing `mini.nvim`" | redraw')
-    local clone_cmd = { 'git', 'clone', '--filter=blob:none', 'https://github.com/echasnovski/mini.nvim', mini_path }
-    vim.fn.system(clone_cmd)
-    vim.cmd('packadd mini.nvim | helptags ALL')
-    vim.cmd('echo "Installed `mini.nvim`" | redraw')
-end
+    local path_package = vim.fn.stdpath('data') .. '/site/'
+    local mini_path = path_package .. 'pack/deps/start/mini.nvim'
+    if not vim.loop.fs_stat(mini_path) then
+        vim.cmd('echo "Installing `mini.nvim`" | redraw')
+        local clone_cmd = { 'git', 'clone', '--filter=blob:none', 'https://github.com/echasnovski/mini.nvim', mini_path }
+        vim.fn.system(clone_cmd)
+        vim.cmd('packadd mini.nvim | helptags ALL')
+        vim.cmd('echo "Installed `mini.nvim`" | redraw')
+    end
 
-----------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------------------------------
 -- Set up 'mini.deps' (customize to your liking)
 -- Use 'mini.deps'. `now()` and `later()` are helpers for a safe two-stage
 ----------------------------------------------------------------------------------------------------
@@ -34,7 +34,12 @@ local add, now, later = MiniDeps.add, MiniDeps.now, MiniDeps.later
 local available_lsp_servers = {
     clangd = { cmd = { "clangd", "--background-index", "--header-insertion=never", --[["--offset-encoding=utf-16",]] --[["--clang-tidy",]] }, },
     rust_analyzer = {},
-    lua_ls = {},
+    lua_ls = {
+       settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" }}}}
+    },
     cmake = {},
     bashls = {},
 
@@ -47,6 +52,15 @@ local available_lsp_servers = {
     -- 'mypy', // N'est pas un LSP et ne peut pas fonctionner avec lspconfig directement.
 }
 
+local mason_tools = {
+    "shfmt",
+    "mbake",
+}
+
+for server, _ in pairs(available_lsp_servers) do
+    table.insert(mason_tools, server)
+end
+
 ----------------------------------------------------------------------------------------------------
 -- Download Plugins
 ----------------------------------------------------------------------------------------------------
@@ -56,13 +70,13 @@ now(function()   add({ source = 'williamboman/mason.nvim',                   dep
                  add({ source = 'williamboman/mason-lspconfig.nvim',         depends = { 'williamboman/mason.nvim' }, })
                  add({ source = 'WhoIsSethDaniel/mason-tool-installer.nvim', depends = { 'williamboman/mason.nvim' }, }) end)
 now(function()   add({ source = 'Mofiqul/vscode.nvim' }) end)
-later(function() add({ source = 'ibhagwan/fzf-lua', }) end)
+later(function() add({ source = 'ibhagwan/fzf-lua',  }) end)
 later(function() add({ source = 'kevinhwang91/nvim-ufo',                     depends = { 'kevinhwang91/promise-async' }, }) end) -- Better fold handling
 later(function() add({ source = 'skywind3000/asyncrun.vim' }) end)
 later(function() add({ source = 'tversteeg/registers.nvim' }) end)
 later(function() add({ source = 'okuuva/auto-save.nvim' }) end)
 later(function() add({ source = 'Saghen/blink.cmp',                          depends = { "rafamadriz/friendly-snippets" }, checkout = "v1.0.0", }) end)
-later(function() add({ source = "mikavilpas/yazi.nvim",                      depends = { "folke/snacks.nvim", "nvim-lua/plenary.nvim" }, }) end)
+later(function() add({ source = "mikavilpas/yazi.nvim",                      depends = { "folke/snacks.nvim", "nvim-lua/plenary.nvim" }, checkout = "v13.1.5", }) end)
 later(function() add({ source = "mfussenegger/nvim-dap",
                     depends = { 'rcarriga/nvim-dap-ui',           --[[Creates a beautiful debugger UI]]
                                 'nvim-neotest/nvim-nio',          --[[Required dependency for nvim-dap-ui]]
@@ -97,7 +111,7 @@ later(function() require('nvim-treesitter.configs').setup({ -- Possible to immed
 now(function()
     require('mason').setup()
     require('mason-lspconfig').setup()
-    local servers_to_install = vim.tbl_keys(available_lsp_servers or {})
+    local servers_to_install = mason_tools -- vim.tbl_keys(mason_tools or {})
 
     require('mason-tool-installer').setup({
         ensure_installed = servers_to_install,
@@ -155,6 +169,7 @@ later(function() require('mini.clue').setup({
     }
     )
 end)
+later(function() require("yazi").setup()  end)
 later(function() require('mini.cursorword').setup() end) -- highlight word under cursor
 later(function() require('mini.diff').setup() end)       -- Add hint about diff in git
 later(function() require('mini.indentscope').setup() end) -- Affiche une ligne pour voir la fin du scope
@@ -625,7 +640,7 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
-vim.keymap.set({ 'n' }, '<leader>y', '<cmd>Yazi<cr>', { desc = '[E]xplore' })
+vim.keymap.set({ 'n' }, '<leader>y', "<cmd>Yazi<cr>", { desc = '[E]xplore' })
 
 vim.o.winborder = 'rounded'
 
