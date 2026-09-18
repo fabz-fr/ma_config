@@ -437,3 +437,51 @@ augroup QuickFixMappings
   autocmd!
   autocmd FileType qf nnoremap <buffer> <CR> <CR>
 augroup END
+
+
+" find function in no plugin mode
+function! FdFiles(path)
+    let output = systemlist('fdfind --type f ' . shellescape(a:path))
+
+    let items = []
+    for file in output
+        call add(items, {'filename': file})
+    endfor
+
+    call setqflist([], ' ', {
+        \ 'title': 'fd',
+        \ 'items': items
+        \ })
+
+    copen
+endfunction
+
+" find occurence of pattern in no plugin mode
+function! RgSearch(pattern, ...)
+    let path = a:0 > 0 ? a:1 : '.'
+
+    let output = systemlist(
+        \ 'rg --vimgrep ' . shellescape(a:pattern) . ' ' . shellescape(path)
+        \ )
+
+    let items = []
+    for line in output
+        let parts = split(line, ':', 4)
+
+        if len(parts) >= 4
+            call add(items, {
+                \ 'filename': parts[0],
+                \ 'lnum': str2nr(parts[1]),
+                \ 'col': str2nr(parts[2]),
+                \ 'text': parts[3]
+                \ })
+        endif
+    endfor
+
+    call setqflist([], ' ', {
+        \ 'title': 'rg: ' . a:pattern,
+        \ 'items': items
+        \ })
+
+    copen
+endfunction
