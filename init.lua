@@ -90,6 +90,7 @@ later(function()   add({ source = 'fabz-fr/hlpatterns.nvim'}) end)
 later(function()   add({ source = 'fabz-fr/call_hierarchy.nvim'}) end)
 later(function()   add({ source = 'folke/flash.nvim'}) end)
 later(function()   add({ source = 'tpope/vim-fugitive'}) end)
+now(function()   add({ source = 'LunarVim/bigfile.nvim'}) end)
 
 ---@format enable
 
@@ -103,7 +104,7 @@ later(function() require('nvim-treesitter.configs').setup({ -- Possible to immed
         },
     })
     -- require('treesitter-context').setup()
-    end)
+end)
 
 ----------------------------------------------------------------------------------------------------
 -- Install Mason & LSP servers
@@ -433,9 +434,11 @@ end)
 
 later(function()
     local builtin = require('fzf-lua')
+    -- vim.keymap.set('n', '<leader>sf', function()builtin.files({ cmd = "fdfind -Ii " }) end, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>sf', builtin.files, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>sw', builtin.grep_cword, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>sW', builtin.grep_cWORD, { desc = '[S]earch current [W]ORD' })
+    -- vim.keymap.set('n', '<leader>sg', function() builtin.live_grep({ cmd = "rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --no-ignore-vcs -e" }) end, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics_document, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
@@ -676,4 +679,23 @@ vim.keymap.set({ 'n', 'v' },           '<CR>',      function() flash_jump(true) 
 vim.keymap.set({ 'n', 'v' },           '<S-CR>',    function() flash_jump(false) end,            { desc = "Toggle Flash Search" })
 
 vim.keymap.set('n', '<leader>to', function() vim.opt.scrolloff = 999 - vim.o.scrolloff end)
+
+
+-- default config
+now(function()   
+    require("bigfile").setup {
+        filesize = 2, -- size of the file in MiB, the plugin round file sizes to the closest MiB
+        pattern = { "*" }, -- autocmd pattern or function see <### Overriding the detection of big files>
+        features = { -- features to disable
+            "indent_blankline",
+            "illuminate",
+            "lsp",
+            "treesitter",
+            "syntax",
+            "matchparen",
+            "vimopts",
+            "filetype",
+        },
+    }
+end)
 
