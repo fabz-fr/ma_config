@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Install tools
+# xclip is mandatory to allow copy from nvim to clipboard
+sudo apt install -y xclip
+
+# Install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+
 # Install wezterm.lua in ~/
 ln -s wezterm/.wezterm.lua ~/.wezterm.lua
 
