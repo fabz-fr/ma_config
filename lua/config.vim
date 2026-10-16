@@ -20,16 +20,13 @@ set syntax=on
 " Highlight matching pairs of brackets. Use the '%' character to jump between them.
 set matchpairs+=<:>
 
-" Add numbers to each line on the left-hand side.
-set number
-
 " Do not save backup files.
 "set nobackup
 
 " Set to true if you have a Nerd Font installed and selected in the terminal
 let g:have_nerd_font = v:false
 
-" Make line numbers default
+" Add numbers to each line on the left-hand side.
 set number
 " Set relative number
 " set relativenumber
@@ -40,13 +37,13 @@ set mouse=a
 " Don't show the mode, since it's already in the status line
 set noshowmode
 
-" Enable break indent
+" Enable break indent (When cursor goes to nextline it keeps the same indentation)
 set breakindent
 
-" Save undo history
+" Save undo history in path `undodir`
 set undofile
 
-" Stop using swap file
+" Stop using swap file (swap file are temporary file that can be retrieved if vim crashes)
 set noswapfile
 
 " Case-insensitive searching UNLESS \C or one or more capital letters in the search term
@@ -56,42 +53,40 @@ set smartcase
 " While searching though a file incrementally highlight matching characters as you type.
 set incsearch
 
-" Set Highlight
+" Set Highlight search
 set hlsearch
 
 " Show matching words during a search.
 set showmatch
 
-" Keep signcolumn on by default
+" Set signcolumn on the left of the buffer. This column add informations like git, folds, diagnostics etc.
 set signcolumn=yes
 
-" Decrease update time
+" Decrease update time (time between user push a key and the trigger of CursorHold autocommand event)
 set updatetime=250
 
-" Decrease mapped sequence wait time
-set timeoutlen=300
+" Decrease mapped sequence wait time. timeoutlen is the timeout that trigger the user keymaps. If
+" user didn't add a key to the keymap sequence, the current keymap sequence will be triggered
+set timeoutlen=400
 
 " Configure how new splits should be opened
 set splitright
 set splitbelow
 
-" Configure how Neovim will display certain whitespace characters
+" Configure how Neovim will display whitespace characters
 set list
 set listchars=tab:--,trail:·,space:·,eol:↴
 
 " command is not compatible with vim
-if exists('g:neovim')
+if exists('+inccommand')
     " Preview substitutions live, as you type
     set inccommand=split
 endif
 
-" Show which line your cursor is on
-set cursorline
-
 " Minimal number of screen lines to keep above and below the cursor
 set scrolloff=5
 
-" Gestion des tabulations
+" Set tabulation as 4 spaces
 set shiftwidth=4
 set expandtab
 set tabstop=4
@@ -103,12 +98,13 @@ set cursorcolumn
 " Set a colon border at 100 characters
 set colorcolumn=100
 
-" Don't wrap lines, Allow long lines to extend as far as the line goes. But allow breaking at word boundaries
-"set nowrap
 " Wrap lines by default 
-set wrap
+set wrap " nowrap
 " When break occurs, if possible, the word is kept full at next line
 set linebreak
+" Set textwidth to 100
+set textwidth=100
+
 " Don't jump over wrapped lines parts
 nnoremap j gj
 nnoremap k gk
@@ -116,11 +112,12 @@ nnoremap k gk
 " Automatically reload file when externally updated
 set autoread
 
-" Set formatoptions for auto-formatting
+" configure formatoptions (how vim formats text) (more info with `:h fo-table`)
+" j : If vim know what to do, when joining comments lines, vim removes the comments pattern `//`
+" c : auto-wrap comments when texwidth is reached
+" q : allows formatting of comment with "gq" (TBD)
+" l : when switching to insert mode in a long line (over textwidth), don't wrap line
 set formatoptions=jcql
-
-" Set textwidth to 100
-set textwidth=100
 
 " Show partial command you type in the last line of the screen.
 set showcmd
@@ -134,20 +131,26 @@ set wildmenu
 " Make wildmenu behave like similar to Bash completion.
 set wildmode=longest:full,full
 
-" Permet de faire des folds par défaut à partir d'un certain niveau. On met à 99 pour ne pas activer cette fonctionnalité.
+" configure folds level (tabulation level) to a high value to prevent vim from folding whole files at startup
 set foldlevel=99
 
-" Même paramètre pour le niveau de départ des folds.
+" configure folds level (tabulation level) to a high value to prevent vim from folding whole files at startup
 set foldlevelstart=99
 
-" Active les folds par défaut.
+" Enable fold feature
 set foldenable
 
 " Ajoute une colonne pour indiquer qu'il y a un fold.
-set foldcolumn=1
+" Add a column a left side of vim, to show folds
+set foldcolumn=0
 
-" There are certain files that we would never want to edit with Vim.
-" Wildmenu will ignore files with these extensions.
+" Automatically save before commands like :next or :make
+set autowrite
+
+" --------------------------------------------------------------------------------------------
+" WILD IGNORE
+" --------------------------------------------------------------------------------------------
+" There are certain files that we would never want to edit with Vim. Wildmenu will ignore files with these extensions.
 set wildignore=**/.git/**,**/build/**,*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx,**/documentation/**
 
 function! SetWildignore() abort
@@ -164,10 +167,6 @@ augroup gitignore
     autocmd!
     autocmd! BufReadPost * call SetWildignore()
 augroup END
-
-
-" Automatically save before commands like :next or :make
-set autowrite
 
 " --------------------------------------------------------------------------------------------
 " STATUS LINE 
@@ -188,7 +187,7 @@ set laststatus=2
 " KEYBINDINGS / SHORTCUTS CONFIGURATION
 " --------------------------------------------------------------------------------------------
 
-" Delete <space> and s map
+" Disable some standard keymaps that are not that are re-used by me
 nnoremap <space> <NOP>
 vnoremap <space> <NOP>
 nnoremap s <NOP>
@@ -485,3 +484,159 @@ function! RgSearch(pattern, ...)
 
     copen
 endfunction
+
+" ~/.vimrc ou ~/.config/nvim/init.vim
+" Flash-like word jump avec étiquettes à 2 lettres, compatible Vim et Neovim
+
+function! s:FlashLabels(n) abort
+  let alphabet = split('asdfghjklqwertyuiopzxcvbnm', '\zs')
+  let labels = []
+  for c1 in alphabet
+    for c2 in alphabet
+      call add(labels, c1 . c2)
+      if len(labels) >= a:n
+        return labels
+      endif
+    endfor
+  endfor
+  return labels
+endfunction
+
+function! s:FlashClearOverlays(use_nvim, ns, overlay_ids) abort
+  if a:use_nvim
+    call nvim_buf_clear_namespace(0, a:ns, 0, -1)
+  elseif has('popupwin')
+    for id in a:overlay_ids
+      silent! call popup_close(id)
+    endfor
+  else
+    for id in a:overlay_ids
+      silent! call matchdelete(id)
+    endfor
+  endif
+endfunction
+
+function! s:FlashDrawOverlays(entries, use_nvim, ns) abort
+  let overlay_ids = []
+  for [lbl, lnum, col] in a:entries
+    if a:use_nvim
+      let id = nvim_buf_set_extmark(0, a:ns, lnum - 1, col - 1,
+            \ {'virt_text': [[lbl, 'IncSearch']], 'virt_text_pos': 'overlay'})
+      call add(overlay_ids, id)
+    elseif has('popupwin')
+      let scr = screenpos(0, lnum, col)
+      if scr.row > 0
+        let id = popup_create(lbl, {
+              \ 'line': scr.row, 'col': scr.col,
+              \ 'highlight': 'IncSearch', 'zindex': 300, 'wrap': 0,
+              \ })
+        call add(overlay_ids, id)
+      endif
+    else
+      let id = matchaddpos('IncSearch', [[lnum, col, 1]], 20)
+      call add(overlay_ids, id)
+    endif
+  endfor
+  return overlay_ids
+endfunction
+
+function! s:FlashWordJump() abort
+  let top = line('w0')
+  let bot = line('w$')
+  let save_cursor = getpos('.')
+
+  " Recherche du début de chaque mot visible à l'écran
+  let matches = []
+  call cursor(top, 1)
+  while 1
+    let pos = searchpos('\<\k\+', 'W', bot)
+    if pos == [0, 0]
+      break
+    endif
+    call add(matches, pos)
+  endwhile
+  call setpos('.', save_cursor)
+
+  if empty(matches)
+    echo 'Flash: aucun mot trouvé'
+    return
+  endif
+
+  let labels = s:FlashLabels(len(matches))
+  let matches = matches[0 : len(labels) - 1]
+
+  " entries : liste de [label, lnum, col]
+  let entries = []
+  for i in range(len(matches))
+    call add(entries, [labels[i], matches[i][0], matches[i][1]])
+  endfor
+
+  let use_nvim = has('nvim')
+  let ns = use_nvim ? nvim_create_namespace('flash_word_jump') : 0
+
+  let overlay_ids = s:FlashDrawOverlays(entries, use_nvim, ns)
+  redraw
+  echohl Question | echo 'Flash> ' | echohl None
+
+  " --- Premier caractère ---
+  let c1 = getchar()
+  call s:FlashClearOverlays(use_nvim, ns, overlay_ids)
+  redraw
+
+  if c1 == 27
+    return
+  endif
+  let c1 = nr2char(c1)
+
+  let filtered = filter(copy(entries), 'v:val[0][0] ==# c1')
+
+  if empty(filtered)
+    echo 'Flash: aucune correspondance'
+    return
+  endif
+
+  " Une seule cible restante avec ce premier caractère : saut direct
+  if len(filtered) == 1
+    call cursor(filtered[0][1], filtered[0][2])
+    return
+  endif
+
+  " --- Second caractère : on n'affiche plus que la 2e lettre des labels restants ---
+  let entries2 = []
+  for [lbl, lnum, col] in filtered
+    call add(entries2, [lbl[1], lnum, col])
+  endfor
+
+  let overlay_ids = s:FlashDrawOverlays(entries2, use_nvim, ns)
+  redraw
+  echohl Question | echo 'Flash> ' . c1 | echohl None
+
+  let c2 = getchar()
+  call s:FlashClearOverlays(use_nvim, ns, overlay_ids)
+  redraw
+
+  if c2 == 27
+    return
+  endif
+  let c2 = nr2char(c2)
+
+  for [lbl, lnum, col] in filtered
+    if lbl[1] ==# c2
+      call cursor(lnum, col)
+      return
+    endif
+  endfor
+
+  echo 'Flash: aucune correspondance'
+endfunction
+
+nnoremap <silent> <CR> :call <SID>FlashWordJump()<CR>
+xnoremap <silent> <CR> :<C-u>call <SID>FlashWordJump()<CR>
+
+
+" format xml code 
+function! FormatXml()
+    %!xmllint --format -
+endfunction
+command! FormatXml call FormatXml()
+
